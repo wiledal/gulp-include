@@ -12,7 +12,7 @@
     "gulpplugin"
   ],
   "author": "Hugo Wiledal",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "devDependencies": {
     "gulp": "~3.3.4",
     "mocha": "~1.17.0",
