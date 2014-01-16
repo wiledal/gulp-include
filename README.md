@@ -9,15 +9,35 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 First, install `gulp-include` as a dev dependency:
 `npm install --save-dev gulp-include`
 
+Then, add your _include-comments_ to your file.
+An _include-comment_ looks like this:
+```javascript
+//= include relative/path/to/file.js
+```
+or 
+```coffeescript
+#= include relative/path/to/file.coffee
+```
+or even
+```javascript
+/*
+= include relative/path/to/file.js
+= require relative/path/to/file2.js
+  =    include    relative/path/to/file.js
+*/
+```
+`gulp-include` does not care about whitespace, as long as the comment-line starts with a  _newline_ followed `=` and contains `include` or `require`
+
+
 The example below compiles a coffee-file with a heap of inclusion inside into a single js-file:
 
 `app.coffee`:
 
-```javascript
-#= require views/AppView
-#= require views/LandingView
-#= require views/AboutView
-#= require views/CheeseView
+```coffeescript
+#= require views/AppView.coffee
+#= require views/LandingView.coffee
+#= require views/AboutView.coffee
+#= require views/CheeseView.coffee
 
 class Main extends AppView
 	constructor: ->
