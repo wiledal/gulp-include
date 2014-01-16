@@ -9,7 +9,10 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 First, install `gulp-include` as a dev dependency:
 `npm install --save-dev gulp-include`
 
-Then, add your _include-comments_ to your file.
+Then, add your _include-comments_ to your file.  
+_People who have experience with `sprockets` or `snockets` will feel at home._  
+
+
 An _include-comment_ looks like this:
 ```javascript
 //= include relative/path/to/file.js
