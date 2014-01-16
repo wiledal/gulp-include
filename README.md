@@ -13,32 +13,35 @@ The example below compiles a coffee-file with a heap of inclusion inside into a 
 
 `app.coffee`:
 
-	#= require views/AppView
-	#= require views/LandingView
-	#= require views/AboutView
-	#= require views/CheeseView
+```javascript
+#= require views/AppView
+#= require views/LandingView
+#= require views/AboutView
+#= require views/CheeseView
 
-	class Main extends AppView
-		constructor: ->
-			console.log "This is main!"
+class Main extends AppView
+	constructor: ->
+		console.log "This is main!"
 
-	window.main = new Main()
+window.main = new Main()
+```
 
 `gulpfile.js`:
 
-	var gulp		= require('gulp'),
-		include		= require('gulp-include'),
-		coffee		= require('gulp-coffee');
+```javascript
+var gulp		= require('gulp'),
+	include		= require('gulp-include'),
+	coffee		= require('gulp-coffee');
 
-	gulp.task("scripts", function() {
-		gulp.src('src/js/app.coffee')
-			.pipe( include() )
-			.pipe( coffee() )
-			.pipe( gulp.dest("dist/js") )
-	});
+gulp.task("scripts", function() {
+	gulp.src('src/js/app.coffee')
+		.pipe( include() )
+		.pipe( coffee() )
+		.pipe( gulp.dest("dist/js") )
+});
 
-	gulp.task("default", "scripts");
-
+gulp.task("default", "scripts");
+```
 
 
 [npm-url]: https://npmjs.org/package/gulp-include
