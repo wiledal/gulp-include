@@ -14,3 +14,4 @@ var object = {};
 // =require lib/a.js
 //  =include lib/b.js
 //=     	require		 lib/nested/c.js
+// = require_tree lib/nested/deeply_nested
