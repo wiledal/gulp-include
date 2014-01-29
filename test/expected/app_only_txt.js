@@ -1,4 +1,5 @@
-//= include header.txt
+header text content
+
 
 // =include lib/a.js
 /*
@@ -17,3 +18,7 @@ var object = {};
 //  =include lib/b.js
 //=     	require		 lib/nested/c.js
 // = require_tree lib/nested/deeply_nested
+nested txt
+
+nested txt2
+

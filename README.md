@@ -10,7 +10,7 @@ First, install `gulp-include` as a dev dependency:
 `npm install --save-dev gulp-include`
 
 Then, add your _include-comments_ to your file.  
-_People who have experience with `sprockets` or `snockets` will feel at home._  
+_People who have experience with `sprockets` or `snockets` will feel at home._ 
 
 
 An _include-comment_ looks like this:
@@ -19,35 +19,39 @@ An _include-comment_ looks like this:
 ```
 or 
 ```coffeescript
-#= include relative/path/to/file.coffee
+#= require_tree relative/path/to/folder
 ```
 or even
 ```javascript
 /*
 = include relative/path/to/file.js
 = require relative/path/to/file2.js
-  =    include    relative/path/to/file.js
+= include_tree relative/path/to/folder
 */
 ```
-`gulp-include` does not care about whitespace, as long as the comment-line starts with a  _newline_ followed `=` and contains `include` or `require`
+`gulp-include` does not care about whitespace, as long as the comment-line starts with a  _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
 
 
-The example below compiles a coffee-file with a heap of inclusion inside into a single js-file:
+The example below compiles a several coffee-files and js-files into a single js-file:
 
 `app.coffee`:
 
 ```coffeescript
-#= require views/AppView.coffee
-#= require views/LandingView.coffee
-#= require views/AboutView.coffee
-#= require views/CheeseView.coffee
+`
+//= require vendor/jquery.js
+//= require vendor/modernizr.js
+`
 
-class Main extends AppView
+#= require controllers/AppController.coffee
+#= require_tree views
+
+class Main extends AppController
 	constructor: ->
 		console.log "This is main!"
 
 window.main = new Main()
 ```
+*Note:* The example above uses backsticks (\`) to allow `gulp-coffee` to compile inline javascript
 
 `gulpfile.js`:
 
@@ -65,6 +69,20 @@ gulp.task("scripts", function() {
 
 gulp.task("default", "scripts");
 ```
+
+## Options
+* `extensions` (optional)
+	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
+	* If set, all inclusions that does not match the extension(s) will be ignored
+
+## Release log
+
+#### 0.2.0
+* Added `require_tree`/`include_tree` (Thanks to [juanghurtado](https://github.com/juanghurtado)!)
+* Method now takes an `extensions` param for controlling what types of files to include
+
+#### 0.1.0
+* Basic include
 
 ## Licence
 (MIT License)

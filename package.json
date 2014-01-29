@@ -1,6 +1,6 @@
 {
   "name": "gulp-include",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Makes inclusion of files a breeze. Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.",
   "homepage": "http://github.com/wiledal/gulp-include",
   "repository": "git://github.com/wiledal/gulp-include.git",

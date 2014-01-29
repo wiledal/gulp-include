@@ -20,7 +20,24 @@ function getFiles(dir, cb){
 	}
 }
 
+function matchExtension(extension, params) {
+	if (params.extensions) {
+		if (Array.isArray(params.extensions)) {
+			if (params.extensions.indexOf(extension) > -1) return true;
+		} else if (typeof params.extensions == "string") {
+			if (params.extensions == extension) return true;
+		} else {
+			throw new gutil.PluginError('gulp-include', 'extensions param only allows Array or String');
+		}
+	}else{
+		return true;
+	}
+	return false;
+}
+
 module.exports = function(params) {
+	var params = params || {};
+
     function include(file, callback) {
 		if (file.isNull()) {
 			return callback(null, file);
@@ -48,15 +65,28 @@ module.exports = function(params) {
 
 						if (stats.isDirectory()) {
 							var filesStr = "";
+
 							getFiles(absolutePath, function(fileName) {
 								if (fs.existsSync(fileName)) {
-									var includeContent = String(fs.readFileSync(fileName));
-									filesStr = filesStr + includeContent;
+									var extension = fileName.split(".").pop();
+									currentExtension = extension;
+
+									if (matchExtension(extension, params)) {
+										var includeContent = String(fs.readFileSync(fileName));
+										filesStr = filesStr + includeContent + gutil.linefeed;
+									}
 								} else {
 									throw new gutil.PluginError('gulp-include', 'File not found: ' + fullPath);
 								}
 							});
-							newText = newText.replace(match, filesStr);
+
+							var replaceWith = ""
+							if (params.extensions) {
+								replaceWith = match + gutil.linefeed + filesStr;
+							} else {
+								replaceWith = filesStr;
+							}
+							newText = newText.replace(match, replaceWith);
 						}
 					}
 				} else if (matches[1].match(/include|require/)) {
@@ -64,11 +94,13 @@ module.exports = function(params) {
 						directive	= matches[2].replace(/['"]/g, '').split(/\s+/),
 						relPath		= file.base,
 						fullPath	= relPath + directive[1];
+						extension	= directive[1].split(".").pop()
 
 					if (fs.existsSync(fullPath)) {
-						var includeContent = String(fs.readFileSync(fullPath));
-
-						newText = newText.replace(match, includeContent);
+						if (matchExtension(extension, params)) {
+							var includeContent = String(fs.readFileSync(fullPath));
+							newText = newText.replace(match, includeContent + gutil.linefeed);
+						}
 					} else {
 						throw new gutil.PluginError('gulp-include', 'File not found: ' + fullPath);
 					}
