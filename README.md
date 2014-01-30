@@ -4,6 +4,8 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 
 > Made for gulp 3
 
+By [wiledal](https://github.com/wiledal) with help from [juanghurtado](https://github.com/juanghurtado)
+
 
 ## Usage
 First, install `gulp-include` as a dev dependency:
@@ -76,6 +78,8 @@ gulp.task("default", "scripts");
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
 ## Release log
+#### 0.2.1
+* Changed replace-method to fix issue when requiring a file that contained special characters ([juanghurtado](https://github.com/juanghurtado))
 
 #### 0.2.0
 * Added `require_tree`/`include_tree` (Thanks to [juanghurtado](https://github.com/juanghurtado)!)
