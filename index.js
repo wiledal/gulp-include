@@ -86,7 +86,7 @@ module.exports = function(params) {
 							} else {
 								replaceWith = filesStr;
 							}
-							newText = newText.replace(match, replaceWith);
+							newText = newText.split(match).join(replaceWith);
 						}
 					}
 				} else if (matches[1].match(/include|require/)) {
@@ -94,12 +94,12 @@ module.exports = function(params) {
 						directive	= matches[2].replace(/['"]/g, '').split(/\s+/),
 						relPath		= file.base,
 						fullPath	= relPath + directive[1];
-						extension	= directive[1].split(".").pop()
+						extension	= directive[1].split(".").pop();
 
 					if (fs.existsSync(fullPath)) {
 						if (matchExtension(extension, params)) {
 							var includeContent = String(fs.readFileSync(fullPath));
-							newText = newText.replace(match, includeContent + gutil.linefeed);
+							newText = newText.split(match).join(includeContent + gutil.linefeed);
 						}
 					} else {
 						throw new gutil.PluginError('gulp-include', 'File not found: ' + fullPath);
