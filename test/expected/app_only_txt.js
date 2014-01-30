@@ -1,3 +1,4 @@
+//= include sample.js
 header text content
 
 
@@ -21,4 +22,5 @@ var object = {};
 nested txt
 
 nested txt2
+
 

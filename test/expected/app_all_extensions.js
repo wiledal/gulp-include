@@ -1,3 +1,6 @@
+nid = old.replace( rescape, "\\$&"  );
+
+
 header text content
 
 
@@ -33,4 +36,5 @@ nested txt
 nested txt2
 
 e content
+
 

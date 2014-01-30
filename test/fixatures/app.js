@@ -1,3 +1,4 @@
+//= include sample.js
 //= include header.txt
 
 // =include lib/a.js
