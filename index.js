@@ -3,7 +3,7 @@ var fs		= require("fs"),
 	es		= require("event-stream"),
 	gutil	= require("gulp-util");
 
-DIRECTIVE_REGEX = /^(.*=\s*(\w+.*?))$/gm
+DIRECTIVE_REGEX = /^(.*=\s*(require|include|require_tree|include_tree)\s+(\w+.*?))$/gm
 
 function getFiles(dir, cb){
 	var files = fs.readdirSync(dir);
@@ -53,12 +53,11 @@ module.exports = function(params) {
 			var matches;
 
 			while (matches = DIRECTIVE_REGEX.exec(text)) {
-				if (matches[1].match(/include_tree|require_tree/)) {
+				if (matches[2] == 'include_tree' || matches[2] == 'require_tree') {
 					var match 		= matches[1],
-						directive	= matches[2].replace(/['"]/g, '').split(/\s+/),
 						relPath		= file.base,
-						fullPath	= relPath + directive[1],
-						absolutePath = path.resolve(fullPath);
+						fullPath	= relPath + matches[3].replace(/['"]/g, ''),
+            absolutePath = path.resolve(fullPath);
 
 					if (fs.existsSync(fullPath)) {
 						var stats = fs.statSync(fullPath);
@@ -89,12 +88,12 @@ module.exports = function(params) {
 							newText = newText.split(match).join(replaceWith);
 						}
 					}
-				} else if (matches[1].match(/include|require/)) {
+				} else if (matches[2] == 'include' || matches[2] == 'require') {
 					var match 		= matches[1],
-						directive	= matches[2].replace(/['"]/g, '').split(/\s+/),
 						relPath		= file.base,
-						fullPath	= relPath + directive[1];
-						extension	= directive[1].split(".").pop();
+						fullPath	= relPath + matches[3].replace(/['"]/g, ''),
+            extension = matches[3].split('.').pop();
+
 
 					if (fs.existsSync(fullPath)) {
 						if (matchExtension(extension, params)) {
