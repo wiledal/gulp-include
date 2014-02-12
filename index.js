@@ -99,14 +99,14 @@ recursive_include = function(file) {
     } else if (matches[2] == 'include' || matches[2] == 'require') {
       var match 		= matches[1],
       relPath		= file.base,
-      fullPath	= relPath + matches[3].replace(/['"]/g, ''),
+      fullPath	= path.join(relPath, matches[3].replace(/['"]/g, '')),
       extension = matches[3].split('.').pop();
 
       if (fs.existsSync(fullPath)) {
         if (matchExtension(extension, params)) {
           var nextFile = new gutil.File( {
             path: fullPath,
-            base: file.base,
+            base: path.dirname(fullPath),
             contents: fs.readFileSync(fullPath)
           })
 
