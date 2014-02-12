@@ -55,8 +55,9 @@ recursive_include = function(file) {
     if (matches[2] == 'include_tree' || matches[2] == 'require_tree') {
       var match 		= matches[1],
       relPath		= file.base,
-      fullPath	= relPath + matches[3].replace(/['"]/g, ''),
+      fullPath	= path.join(relPath, matches[3].replace(/['"]/g, '')),
       absolutePath = path.resolve(fullPath);
+
 
       if (fs.existsSync(fullPath)) {
         var stats = fs.statSync(fullPath);
@@ -72,6 +73,7 @@ recursive_include = function(file) {
 
               if (matchExtension(extension, params)) {
                 var nextFile = new gutil.File( {
+                  base: path.dirname(fileName),
                   path: fileName,
                   contents: fs.readFileSync(fileName)
                 })

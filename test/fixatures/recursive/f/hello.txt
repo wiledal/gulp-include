@@ -1,1 +1,2 @@
 hello
+//= include ../a.txt
