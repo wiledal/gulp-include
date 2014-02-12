@@ -123,7 +123,6 @@ recursive_include = function(file) {
 }
 
 module.exports = function(parameters) {
-    params = parameters || {};
 
     function include(file, callback) {
       if (file.isNull()) {
@@ -135,6 +134,7 @@ module.exports = function(parameters) {
       }
 
       if (file.isBuffer()) {
+        params = parameters || {};
         recursive_include(file)
       }
 
