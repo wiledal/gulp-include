@@ -29,6 +29,7 @@ describe("gulp-include", function() {
 
     it ("should match require", function () {
       matches = include_module.DIRECTIVE_REGEX.exec("= require src/blah.js")
+      should.exist(matches)
       matches[1].should.eql('= require src/blah.js')
       matches[2].should.eql('require')
       matches[3].should.eql('src/blah.js')
@@ -36,12 +37,14 @@ describe("gulp-include", function() {
 
     it ("should match require_tree", function () {
       matches = include_module.DIRECTIVE_REGEX.exec("= require_tree src")
+      should.exist(matches)
       matches[1].should.eql('= require_tree src')
       matches[2].should.eql('require_tree')
       matches[3].should.eql('src')
     })
 
     it ("should match include", function () {
+      should.exist(matches)
       matches = include_module.DIRECTIVE_REGEX.exec("= include src/blah.js")
       matches[1].should.eql('= include src/blah.js')
       matches[2].should.eql('include')
@@ -50,6 +53,7 @@ describe("gulp-include", function() {
 
     it ("should match include_tree", function () {
       matches = include_module.DIRECTIVE_REGEX.exec("= include_tree src")
+      should.exist(matches)
       matches[1].should.eql('= include_tree src')
       matches[2].should.eql('include_tree')
       matches[3].should.eql('src')
@@ -58,6 +62,14 @@ describe("gulp-include", function() {
     it ("should not match 'var x = require(blah)'", function() {
       matches = include_module.DIRECTIVE_REGEX.exec("var x = require('fakemod')")
       should.not.exist(matches)
+    })
+
+    it ("should match relative requires", function() {
+      matches = include_module.DIRECTIVE_REGEX.exec("= include ../src/blah.js")
+      should.exist(matches)
+      matches[1].should.eql('= include ../src/blah.js')
+      matches[2].should.eql('include')
+      matches[3].should.eql('../src/blah.js')
     })
   })
 
@@ -119,4 +131,23 @@ describe("gulp-include", function() {
 		});
 		testInclude.write(file);
 	});
+
+  it("should include files with a relative path", function(done) {
+		var file = new gutil.File({
+			base: "test/fixatures/relative/",
+			path: "test/fixatures/relative/app.js",
+			contents: fs.readFileSync("test/fixatures/relative/app.js")
+		});
+
+
+    testInclude = include({ extensions: ['js']})
+    testInclude.on("data", function(newFile) {
+      should.exist(newFile)
+      should.exist(newFile.contents)
+
+      String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/relative.js'), "utf8"))
+      done()
+    })
+    testInclude.write(file)
+  })
 });
