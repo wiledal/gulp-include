@@ -88,7 +88,6 @@ recursive_include = function(file) {
           });
 
           var replaceWith = ""
-          debugger
           if (skipped_files) {
             replaceWith = match + gutil.linefeed + filesStr;
           } else {
