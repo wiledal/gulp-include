@@ -78,6 +78,9 @@ gulp.task("default", "scripts");
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
 ## Release log
+#### 0.2.2
+* Updated regex directive to not collide with other requireing plugins, like browserify ([cwacek](https://github.com/cwacek))
+
 #### 0.2.1
 * Changed replace-method to fix issue when requiring a file that contained special characters ([juanghurtado](https://github.com/juanghurtado))
 
