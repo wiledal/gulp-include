@@ -3,7 +3,8 @@ var fs		= require("fs"),
 	es		= require("event-stream"),
 	gutil	= require("gulp-util");
 
-DIRECTIVE_REGEX = /^(.*=\s*(require|include|require_tree|include_tree)\s+([\w\.\/-]+))$/gm
+DIRECTIVE_REGEX = /^(.*=\s*(require|include|require_tree|include_tree)\s+([\w\.\/-]+))$/gm;
+IS_HIDDEN_REGEX = /(^|.\/)\.+[^\/\.]/g;
 
 function getFiles(dir, cb){
 	var files = fs.readdirSync(dir);
@@ -11,12 +12,14 @@ function getFiles(dir, cb){
 	for(var i in files){
 		if (!files.hasOwnProperty(i)) continue;
 		var name = dir+'/'+files[i];
-
-		if (fs.statSync(name).isDirectory()){
-			getFiles(name, cb);
-		}else{
-			cb(name);
-		}
+    var isHidden = IS_HIDDEN_REGEX.test(name);
+    if (!isHidden) {
+      if (fs.statSync(name).isDirectory()){
+        getFiles(name, cb);
+      } else {
+        cb(name);
+      }
+    }
 	}
 }
 
