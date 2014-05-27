@@ -55,8 +55,8 @@ module.exports = function(params) {
 			while (matches = DIRECTIVE_REGEX.exec(text)) {
 				if (matches[2] == 'include_tree' || matches[2] == 'require_tree') {
 					var match 		= matches[1],
-						relPath		= file.base,
-						fullPath	= relPath + matches[3].replace(/['"]/g, ''),
+						relPath		= path.dirname( file.path ),
+						fullPath	= path.join(relPath,  matches[3].replace(/['"]/g, '')),
             absolutePath = path.resolve(fullPath);
 
 					if (fs.existsSync(fullPath)) {
@@ -90,8 +90,8 @@ module.exports = function(params) {
 					}
 				} else if (matches[2] == 'include' || matches[2] == 'require') {
 					var match 		= matches[1],
-						relPath		= file.base,
-						fullPath	= relPath + matches[3].replace(/['"]/g, ''),
+						relPath		= path.dirname( file.path ),
+						fullPath	= path.join(relPath,  matches[3].replace(/['"]/g, '')),
             extension = matches[3].split('.').pop();
 
 
