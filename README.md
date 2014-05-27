@@ -4,8 +4,6 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 
 > Made for gulp 3
 
-By [wiledal](https://github.com/wiledal) with help from [juanghurtado](https://github.com/juanghurtado)
-
 
 ## Usage
 First, install `gulp-include` as a dev dependency:
@@ -78,6 +76,9 @@ gulp.task("default", "scripts");
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
 ## Release log
+#### 0.2.3
+* Merged community fixes by [platdesign](https://github.com/platdesign) and [cujojp](https://github.com/cujojp)
+
 #### 0.2.2
 * Updated regex directive to not collide with other requireing plugins, like browserify ([cwacek](https://github.com/cwacek))
 
