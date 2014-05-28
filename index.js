@@ -75,6 +75,11 @@ module.exports = function(params) {
 
 									if (matchExtension(extension, params)) {
 										var includeContent = String(fs.readFileSync(fileName));
+
+										if(whitespace = match.match(/^\s+/)) {
+											includeContent = addLeadingWhitespace(whitespace, includeContent)
+										}
+
 										filesStr = filesStr + includeContent + gutil.linefeed;
 									}
 								} else {
@@ -101,6 +106,11 @@ module.exports = function(params) {
 					if (fs.existsSync(fullPath)) {
 						if (matchExtension(extension, params)) {
 							var includeContent = String(fs.readFileSync(fullPath));
+
+							if(whitespace = match.match(/^\s+/)) {
+								includeContent = addLeadingWhitespace(whitespace, includeContent)
+							}
+
 							newText = newText.split(match).join(includeContent + gutil.linefeed);
 						}
 					} else {
@@ -115,4 +125,10 @@ module.exports = function(params) {
 	}
 
     return es.map(include)
+}
+
+function addLeadingWhitespace(whitespace, string) {
+	return string.split("\n").map(function(line) {
+		return whitespace+line
+	}).join("\n")
 }
