@@ -45,12 +45,12 @@ function expand(fileContents, filePath) {
 
     DIRECTIVE_REGEX.lastIndex = 0;
 
-    while(regexMatch = DIRECTIVE_REGEX.exec(fileContents)) {
+    while (regexMatch = DIRECTIVE_REGEX.exec(fileContents)) {
         matches.push(regexMatch);
     }
 
     i = matches.length;
-    while(i--) {
+    while (i--) {
         var match = matches[i],
             original = match[0],
             directiveType = match[1],
@@ -59,17 +59,17 @@ function expand(fileContents, filePath) {
             thisMatchText = "",
             files = globMatch(match, filePath);
 
-        if(directiveType.indexOf("_tree") !== -1 || directiveType.indexOf("_directory") !== -1){
+        if (directiveType.indexOf("_tree") !== -1 || directiveType.indexOf("_directory") !== -1) {
             thisMatchText += original + "\n";
         }
 
-        for(j = 0; j < files.length; j++){
+        for (j = 0; j < files.length; j++) {
             var fileName = files[j];
             thisMatchText += expand(String(fs.readFileSync(fileName)), fileName) + "\n";
             if (directiveType.indexOf('require') !== -1) requiredFiles[fileName] = true;
         }
 
-        thisMatchText = thisMatchText  || original ;
+        thisMatchText = thisMatchText || original;
 
         returnText = replaceStringByIndices(returnText, start, end, thisMatchText);
     }
@@ -97,25 +97,25 @@ function globMatch(match, filePath) {
 
     if (directiveType === 'require' || directiveType === 'include') {
 
-        if(relativeFilePath.charAt(0) === '['){
+        if (relativeFilePath.charAt(0) === '[') {
             relativeFilePath = eval(relativeFilePath);
-            for(var i = 0; i < relativeFilePath.length; i++){
-                if(relativeFilePath[i].charAt(0) === '!'){
+            for (var i = 0; i < relativeFilePath.length; i++) {
+                if (relativeFilePath[i].charAt(0) === '!') {
                     negations.push(relativeFilePath[i].slice(1))
-                } else{
+                } else {
                     globs.push(relativeFilePath[i])
                 }
             }
-        } else{
+        } else {
             globs.push(relativeFilePath);
         }
 
-        for(var i = 0; i < globs.length; i++){
+        for (var i = 0; i < globs.length; i++) {
             var globFiles = _internalGlob(globs[i], filePath);
             files = union(files, globFiles);
         }
 
-        for(var i = 0; i < negations.length; i++){
+        for (var i = 0; i < negations.length; i++) {
             var negationFiles = _internalGlob(negations[i].substring(1), filePath);
             files = difference(files, negationFiles);
         }
@@ -125,7 +125,7 @@ function globMatch(match, filePath) {
     return files;
 }
 
-function _internalGlob(thisGlob, filePath){
+function _internalGlob(thisGlob, filePath) {
     var folderPath = path.dirname(filePath),
         fullPath = path.join(folderPath, thisGlob.replace(/['"]/g, '')),
         files;
@@ -159,24 +159,24 @@ function _internalGlob(thisGlob, filePath){
     return files;
 }
 
-function replaceStringByIndices(string, start, end, replacement){
+function replaceStringByIndices(string, start, end, replacement) {
     return string.substring(0, start) + replacement + string.substring(end);
 }
 
 //We can't use lo-dash's union function because it wouldn't support this: ["*.js", "app.js"], which requires app.js to come last
-function union(arr1, arr2){
-    if(arr1.length == 0) return arr2;
+function union(arr1, arr2) {
+    if (arr1.length == 0) return arr2;
     var index;
-    for(var i = 0; i < arr2.length; i++){
-        if((index = arr1.indexOf(arr2[i])) !== -1) arr1.splice(index, 1)
+    for (var i = 0; i < arr2.length; i++) {
+        if ((index = arr1.indexOf(arr2[i])) !== -1) arr1.splice(index, 1)
     }
     return arr1.concat(arr2);
 }
 
-function difference(arr1, arr2){
+function difference(arr1, arr2) {
     var index;
-    for(var i = 0; i < arr2.length; i++){
-        while((index = arr1.indexOf(arr2[i])) !== -1){
+    for (var i = 0; i < arr2.length; i++) {
+        while ((index = arr1.indexOf(arr2[i])) !== -1) {
             arr1.splice(index, 1)
         }
     }
