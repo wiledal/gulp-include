@@ -46,15 +46,16 @@ or even
 `gulp-include` does not care about whitespace, as long as the comment-line starts with a  _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
 
 This plugin recursively expand files it includes, so you can nest includes inside of files that
-    were themselves included. 
+    were themselves included. IE:
     
-For example in a file main.js
 ```
-//= include a.js 
+`main.js`
+//= include included_file.js 
 ```
-and in a.js
+
 ```
-//= include b.js
+`included_file.js`
+//= include recursive_include.js
 ```
 And so on recursively to an arbitrary depth. 
 
