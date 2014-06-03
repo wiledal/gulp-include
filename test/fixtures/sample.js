@@ -1,0 +1,1 @@
+nid = old.replace( rescape, "\\$&"  );
