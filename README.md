@@ -47,14 +47,14 @@ or even
 
 This plugin recursively expand files it includes, so you can nest includes inside of files that
     were themselves included. IE:
-    
+
+`main.js`:
 ```
-`main.js`
 //= include included_file.js 
 ```
 
+`included_file.js`:
 ```
-`included_file.js`
 //= include recursive_include.js
 ```
 And so on recursively to an arbitrary depth. 
