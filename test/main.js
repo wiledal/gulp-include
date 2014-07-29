@@ -22,13 +22,15 @@ describe("gulp-include", function() {
     }
     vm.runInNewContext(fs.readFileSync('index.js'), include_module)
 
+    var regex;
+
     beforeEach(function(done){
-      include_module.DIRECTIVE_REGEX.lastIndex = 0
+      regex = new RegExp(include_module.DIRECTIVE_REGEX)
       done()
     })
 
     it ("should match require", function () {
-      matches = include_module.DIRECTIVE_REGEX.exec("= require src/blah.js")
+      matches = regex.exec("= require src/blah.js")
       should.exist(matches)
       matches[1].should.eql('= require src/blah.js')
       matches[2].should.eql('require')
@@ -36,7 +38,7 @@ describe("gulp-include", function() {
     })
 
     it ("should match require_tree", function () {
-      matches = include_module.DIRECTIVE_REGEX.exec("= require_tree src")
+      matches = regex.exec("= require_tree src")
       should.exist(matches)
       matches[1].should.eql('= require_tree src')
       matches[2].should.eql('require_tree')
@@ -45,14 +47,14 @@ describe("gulp-include", function() {
 
     it ("should match include", function () {
       should.exist(matches)
-      matches = include_module.DIRECTIVE_REGEX.exec("= include src/blah.js")
+      matches = regex.exec("= include src/blah.js")
       matches[1].should.eql('= include src/blah.js')
       matches[2].should.eql('include')
       matches[3].should.eql('src/blah.js')
     })
 
     it ("should match include_tree", function () {
-      matches = include_module.DIRECTIVE_REGEX.exec("= include_tree src")
+      matches = regex.exec("= include_tree src")
       should.exist(matches)
       matches[1].should.eql('= include_tree src')
       matches[2].should.eql('include_tree')
@@ -60,12 +62,12 @@ describe("gulp-include", function() {
     })
   
     it ("should not match 'var x = require(blah)'", function() {
-      matches = include_module.DIRECTIVE_REGEX.exec("var x = require('fakemod')")
+      matches = regex.exec("var x = require('fakemod')")
       should.not.exist(matches)
     })
 
     it ("should match relative requires", function() {
-      matches = include_module.DIRECTIVE_REGEX.exec("= include ../src/blah.js")
+      matches = regex.exec("= include ../src/blah.js")
       should.exist(matches)
       matches[1].should.eql('= include ../src/blah.js')
       matches[2].should.eql('include')
@@ -149,5 +151,44 @@ describe("gulp-include", function() {
       done()
     })
     testInclude.write(file)
+  })
+
+  describe ('should process files recursively', function() {
+
+    var file
+    beforeEach(function(done) {
+      file = new gutil.File({
+        base: "test/fixatures/recursive/",
+        path: "test/fixatures/recursive/c.js",
+        contents: fs.readFileSync("test/fixatures/recursive/c.js")
+      });
+      done()
+    })
+
+    it ('keeping unprocessed extensions',  function(done) {
+
+      testInclude = include({ extensions: ['js']})
+      testInclude.on("data", function(newFile) {
+        should.exist(newFile)
+        should.exist(newFile.contents)
+
+        String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/recursive_ext.js'), "utf8"))
+        done()
+      })
+      testInclude.write(file)
+    })
+
+    it ('processing all extensions if none provided',  function(done) {
+
+      testInclude = include()
+      testInclude.on("data", function(newFile) {
+        should.exist(newFile)
+        should.exist(newFile.contents)
+
+        String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/recursive.js'), "utf8"))
+        done()
+      })
+      testInclude.write(file)
+    })
   })
 });

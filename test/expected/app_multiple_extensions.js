@@ -27,7 +27,6 @@ b content
 
 c content
 
-// = require_tree lib/nested/deeply_nested
 d content
 
 f content
