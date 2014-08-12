@@ -3,7 +3,6 @@ nid = old.replace( rescape, "\\$&"  );
 
 header text content
 
-
 a content
 
 /*
@@ -11,7 +10,6 @@ a content
 */
 
 // = does this break it?
-
 a content
 
 b content
@@ -20,7 +18,6 @@ c content
 
 
 var object = {};
-
 a content
 
 b content

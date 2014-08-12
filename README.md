@@ -17,7 +17,21 @@ An _include-comment_ looks like this:
 ```javascript
 //= include relative/path/to/file.js
 ```
-or 
+or if you want to get crazy, a glob pattern like so:
+```javascript
+//= include relative/path/to/directory/*.js
+```
+
+or to get even crazier, an array glob similar to commonly used in GruntJS:
+```javascript
+//= include ['app/someFramework.js', 'app/**/*.js', '!app/vendor/**/*', 'app/someLibrary.js']
+```
+
+(Note: for those of you unfamiliar with the above syntax, check out https://github.com/isaacs/node-glob
+or http://gruntjs.com/configuring-tasks#globbing-patterns) 
+
+You can do all of this in any language, the only requirement is that the first character
+ on the line after any #, /, or white space characters be an equal sign. All the following would be valid.
 ```coffeescript
 #= require_tree relative/path/to/folder
 ```
@@ -29,8 +43,21 @@ or even
 = include_tree relative/path/to/folder
 */
 ```
-`gulp-include` does not care about whitespace, as long as the comment-line starts with a  _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
+`gulp-include` disregards whitespace, as long as the comment-line starts with a _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
 
+This plugin recursively expand files it includes, so you can nest includes inside of files that
+    were themselves included. IE:
+
+`main.js`:
+```
+//= include included_file.js 
+```
+
+`included_file.js`:
+```
+//= include recursive_include.js
+```
+And so on recursively to an arbitrary depth. 
 
 The example below compiles a several coffee-files and js-files into a single js-file:
 
@@ -76,6 +103,15 @@ gulp.task("default", "scripts");
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
 ## Release log
+#### 1.0.0
+* Merged major refactoring by [scottmas](https://github.com/scottmas) - Many thanks!
+	* Rewritten core (regex, replacing and file mashing)
+	* Glob support
+	* Recursive support
+	* Respecting indentation of included files
+
+* Upping version to 1.0.0 - seems fitting after such a large refactor
+
 #### 0.2.3
 * Merged community fixes by [platdesign](https://github.com/platdesign) and [cujojp](https://github.com/cujojp)
 
