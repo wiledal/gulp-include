@@ -12,6 +12,9 @@ var requiredFiles = {},
 
 module.exports = function (params) {
     var params = params || {};
+    requiredFiles = {};
+    extensions = [];
+
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
     }
@@ -65,7 +68,7 @@ function expand(fileContents, filePath) {
         for (j = 0; j < files.length; j++) {
             var fileName = files[j];
             thisMatchText += expand(String(fs.readFileSync(fileName)), fileName) + "\n";
-            if (directiveType.indexOf('require') !== -1) requiredFiles[fileName] = true;
+            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) requiredFiles[fileName] = true;
         }
 
         thisMatchText = thisMatchText || original;
@@ -77,7 +80,6 @@ function expand(fileContents, filePath) {
 }
 
 function globMatch(match, filePath) {
-
     var directiveType = match[1],
         relativeFilePath = match[2],
         files = [],
@@ -95,7 +97,6 @@ function globMatch(match, filePath) {
     }
 
     if (directiveType === 'require' || directiveType === 'include') {
-
         if (relativeFilePath.charAt(0) === '[') {
             relativeFilePath = eval(relativeFilePath);
             for (var i = 0; i < relativeFilePath.length; i++) {
@@ -139,11 +140,6 @@ function _internalGlob(thisGlob, filePath) {
 
         //Ignore directories
         if (slashSplit.pop() === '')
-            return false;
-
-        //Note to wiledal: This check is unneccessary since glob ignores hidden files by default
-        //Ignore hidden files
-        if (slashSplit.pop().slice(-1) === '.')
             return false;
 
         //Check for allowable extensions if specified, otherwise allow all extensions

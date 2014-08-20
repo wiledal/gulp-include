@@ -31,17 +31,9 @@ or to get even crazier, an array glob similar to commonly used in GruntJS:
 or http://gruntjs.com/configuring-tasks#globbing-patterns) 
 
 You can do all of this in any language, the only requirement is that the first character
- on the line after any #, /, or white space characters be an equal sign. All the following would be valid.
+ on the line after any #, /, or white space characters is an equal sign.
 ```coffeescript
-#= require_tree relative/path/to/folder
-```
-or even
-```javascript
-/*
-= include relative/path/to/file.js
-= require relative/path/to/file2.js
-= include_tree relative/path/to/folder
-*/
+#= require_tree relative/path/to/directory
 ```
 `gulp-include` disregards whitespace, as long as the comment-line starts with a _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
 
@@ -103,6 +95,9 @@ gulp.task("default", "scripts");
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
 ## Release log
+#### 1.0.1
+* Fixed issue which caused extensions to be "remembered" if `gulp-include` ran multiple times in a row, resulting in lost includes
+
 #### 1.0.0
 * Merged major refactoring by [scottmas](https://github.com/scottmas) - Many thanks!
 	* Rewritten core (regex, replacing and file mashing)

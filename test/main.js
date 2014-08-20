@@ -204,7 +204,7 @@ describe("gulp-include", function () {
             });
 
 
-            testInclude = include({
+            var testInclude = include({
                 extensions: 'js'
             })
             testInclude.on("data", function (newFile) {
@@ -212,6 +212,25 @@ describe("gulp-include", function () {
                 should.exist(newFile.contents)
 
                 String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/whitespace.js'), "utf8"))
+                done()
+            });
+            testInclude.write(file)
+        })
+
+        it("Should work with css files", function (done) {
+            var file = new gutil.File({
+                base: "test/fixtures/styles/",
+                path: "test/fixtures/styles/a.css",
+                contents: fs.readFileSync("test/fixtures/styles/a.css")
+            });
+
+
+            var testInclude = include();
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile)
+                should.exist(newFile.contents)
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/styles.css'), "utf8"))
                 done()
             });
             testInclude.write(file)
