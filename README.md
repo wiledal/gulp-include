@@ -70,7 +70,7 @@ class Main extends AppController
 
 window.main = new Main()
 ```
-*Note:* The example above uses backsticks (\`) to allow `gulp-coffee` to compile inline javascript
+*Note:* The example above uses backticks (\`) to allow `gulp-coffee` to compile inline javascript
 
 `gulpfile.js`:
 
