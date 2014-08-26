@@ -68,6 +68,12 @@ function expand(fileContents, filePath) {
         for (j = 0; j < files.length; j++) {
             var fileName = files[j];
             thisMatchText += expand(String(fs.readFileSync(fileName)), fileName) + "\n";
+            
+            var whitespace = "";
+            if (whitespace = original.match(/^\s+/)) {
+                thisMatchText = addLeadingWhitespace(whitespace, thisMatchText);
+            }
+            
             if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
                 requiredFiles[fileName] = true;
             }
@@ -158,6 +164,12 @@ function _internalGlob(thisGlob, filePath) {
 
 function replaceStringByIndices(string, start, end, replacement) {
     return string.substring(0, start) + replacement + string.substring(end);
+}
+
+function addLeadingWhitespace(whitespace, string) {
+    return string.split("\n").map(function(line) {
+        return whitespace + line;
+    }).join("\n");
 }
 
 //We can't use lo-dash's union function because it wouldn't support this: ["*.js", "app.js"], which requires app.js to come last
