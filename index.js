@@ -68,7 +68,9 @@ function expand(fileContents, filePath) {
         for (j = 0; j < files.length; j++) {
             var fileName = files[j];
             thisMatchText += expand(String(fs.readFileSync(fileName)), fileName) + "\n";
-            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) requiredFiles[fileName] = true;
+            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
+                requiredFiles[fileName] = true;
+            }
         }
 
         thisMatchText = thisMatchText || original;
@@ -103,7 +105,7 @@ function globMatch(match, filePath) {
                 if (relativeFilePath[i].charAt(0) === '!') {
                     negations.push(relativeFilePath[i].slice(1))
                 } else {
-                    globs.push(relativeFilePath[i])
+                    globs.push(relativeFilePath[i]);
                 }
             }
         } else {
@@ -160,10 +162,15 @@ function replaceStringByIndices(string, start, end, replacement) {
 
 //We can't use lo-dash's union function because it wouldn't support this: ["*.js", "app.js"], which requires app.js to come last
 function union(arr1, arr2) {
-    if (arr1.length == 0) return arr2;
+    if (arr1.length == 0) {
+        return arr2;
+    }
+    
     var index;
     for (var i = 0; i < arr2.length; i++) {
-        if ((index = arr1.indexOf(arr2[i])) !== -1) arr1.splice(index, 1)
+        if ((index = arr1.indexOf(arr2[i])) !== -1) {
+            arr1.splice(index, 1);
+        }
     }
     return arr1.concat(arr2);
 }
@@ -172,7 +179,7 @@ function difference(arr1, arr2) {
     var index;
     for (var i = 0; i < arr2.length; i++) {
         while ((index = arr1.indexOf(arr2[i])) !== -1) {
-            arr1.splice(index, 1)
+            arr1.splice(index, 1);
         }
     }
     return arr1;
