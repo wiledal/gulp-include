@@ -93,6 +93,13 @@ gulp.task("default", "scripts");
 * `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
 	* If set, all inclusions that does not match the extension(s) will be ignored
+* `basePath` (optional)
+	* Takes a `String` path
+	* If set, all inclusions will be based from the `basePath` instead of being relative to the file
+* `autoExtension` (optional)
+	* Takes a `Boolean`
+	* If set, all inclusions will automatically have the current file extension added to them
+
 
 ## Release log
 #### 1.0.1

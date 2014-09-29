@@ -2,21 +2,30 @@ var fs = require('fs'),
     path = require('path'),
     es = require('event-stream'),
     gutil = require('gulp-util'),
-    glob = require('glob');
+    glob = require('glob'),
+    _ = require('lodash');
 
 
 var DIRECTIVE_REGEX = /^[\/\s#]*?=\s*?((?:require|include)(?:_tree|_directory)?)\s+(.*$)/mg;
 
 var requiredFiles = {},
-    extensions = [];
+    extensions = [],
+    basePath = '',
+    autoExtension = '';
 
 module.exports = function (params) {
-    var params = params || {};
+    params = params || {};
     requiredFiles = {};
     extensions = [];
 
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
+    }
+    if (params.basePath) {
+        basePath = typeof params.basePath === 'string' ? path.normalize(process.cwd() + '/' + params.basePath) : '';
+    }
+    if (params.autoExtension) {
+        autoExtension = typeof params.autoExtension === 'boolean' ? params.autoExtension : false;
     }
 
     function include(file, callback) {
@@ -36,7 +45,7 @@ module.exports = function (params) {
         callback(null, file);
     }
 
-    return es.map(include)
+    return es.map(include);
 };
 
 function expand(fileContents, filePath) {
@@ -101,9 +110,9 @@ function globMatch(match, filePath) {
             relativeFilePath = eval(relativeFilePath);
             for (var i = 0; i < relativeFilePath.length; i++) {
                 if (relativeFilePath[i].charAt(0) === '!') {
-                    negations.push(relativeFilePath[i].slice(1))
+                    negations.push(relativeFilePath[i].slice(1));
                 } else {
-                    globs.push(relativeFilePath[i])
+                    globs.push(relativeFilePath[i]);
                 }
             }
         } else {
@@ -127,7 +136,7 @@ function globMatch(match, filePath) {
 
 function _internalGlob(thisGlob, filePath) {
     var folderPath = path.dirname(filePath),
-        fullPath = path.join(folderPath, thisGlob.replace(/['"]/g, '')),
+        fullPath = path.join((basePath !== '') ? basePath : filePath, thisGlob.replace(/['"]/g, '')) + ((autoExtension) ? '.'+_.last(filePath.split('.')) : ''),
         files;
 
     files = glob.sync(fullPath, {
@@ -160,7 +169,7 @@ function replaceStringByIndices(string, start, end, replacement) {
 
 //We can't use lo-dash's union function because it wouldn't support this: ["*.js", "app.js"], which requires app.js to come last
 function union(arr1, arr2) {
-    if (arr1.length == 0) return arr2;
+    if (arr1.length === 0) return arr2;
     var index;
     for (var i = 0; i < arr2.length; i++) {
         if ((index = arr1.indexOf(arr2[i])) !== -1) arr1.splice(index, 1)
@@ -172,7 +181,7 @@ function difference(arr1, arr2) {
     var index;
     for (var i = 0; i < arr2.length; i++) {
         while ((index = arr1.indexOf(arr2[i])) !== -1) {
-            arr1.splice(index, 1)
+            arr1.splice(index, 1);
         }
     }
     return arr1;
