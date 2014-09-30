@@ -17,6 +17,8 @@ module.exports = function (params) {
     params = params || {};
     requiredFiles = {};
     extensions = [];
+    basePath = '';
+    autoExtension = '';
 
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
@@ -136,7 +138,7 @@ function globMatch(match, filePath) {
 
 function _internalGlob(thisGlob, filePath) {
     var folderPath = path.dirname(filePath),
-        fullPath = path.join((basePath !== '') ? basePath : filePath, thisGlob.replace(/['"]/g, '')) + ((autoExtension) ? '.'+_.last(filePath.split('.')) : ''),
+        fullPath = path.join((basePath !== '') ? basePath : folderPath, thisGlob.replace(/['"]/g, '') + ((autoExtension) ? '.'+_.last(filePath.split('.')) : '')),
         files;
 
     files = glob.sync(fullPath, {

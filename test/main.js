@@ -236,5 +236,48 @@ describe("gulp-include", function () {
             testInclude.write(file)
         })
 
+        it("should include files with a absolute path", function (done) {
+            var file = new gutil.File({
+                base: "test/fixtures/absolute/",
+                path: "test/fixtures/absolute/app.js",
+                contents: fs.readFileSync("test/fixtures/absolute/app.js")
+            });
+
+
+            var testInclude = include({
+                basePath: 'test/fixtures/',
+                autoExtension: false
+           })
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile)
+                should.exist(newFile.contents)
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/absolute.js'), "utf8"))
+                done()
+            })
+            testInclude.write(file)
+        })
+
+        it("should include files with a default extension", function (done) {
+            var file = new gutil.File({
+                base: "test/fixtures/auto-extension/",
+                path: "test/fixtures/auto-extension/app.js",
+                contents: fs.readFileSync("test/fixtures/auto-extension/app.js")
+            });
+
+
+            var testInclude = include({
+                autoExtension: true
+            })
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile)
+                should.exist(newFile.contents)
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/auto-extension.js'), "utf8"))
+                done()
+            })
+            testInclude.write(file)
+        })
+
     })
 });
