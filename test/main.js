@@ -216,6 +216,27 @@ describe("gulp-include", function () {
             });
             testInclude.write(file)
         })
+        
+        it("Should retain origin file's leading whitespace", function (done) {
+            var file = new gutil.File({
+                base: "test/fixtures/whitespace/",
+                path: "test/fixtures/whitespace/a_origin.js",
+                contents: fs.readFileSync("test/fixtures/whitespace/a_origin.js")
+            });
+
+
+            var testInclude = include({
+                extensions: 'js'
+            })
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile)
+                should.exist(newFile.contents)
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/whitespace_origin.js'), "utf8"))
+                done()
+            });
+            testInclude.write(file)
+        })
 
         it("Should work with css files", function (done) {
             var file = new gutil.File({
