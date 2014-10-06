@@ -70,16 +70,36 @@ function expand(fileContents, filePath) {
             start = match.index,
             end = start + original.length,
             thisMatchText = "",
-            files = globMatch(match, filePath);
+            newMatchText = "",
+            files = globMatch(match, filePath),
+            fileName = "",
+            whitespace = null;
 
         if (directiveType.indexOf("_tree") !== -1 || directiveType.indexOf("_directory") !== -1) {
             thisMatchText += original + "\n";
         }
 
         for (j = 0; j < files.length; j++) {
-            var fileName = files[j];
-            thisMatchText += expand(String(fs.readFileSync(fileName)), fileName) + "\n";
-            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) requiredFiles[fileName] = true;
+            fileName = files[j];
+            newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
+
+            //Try to retain the same indent level from the original include line
+            whitespace = original.match(/^\s+/);
+            if (whitespace) {
+                //Discard newlines
+                whitespace = whitespace[0].replace("\n", "");
+
+                //Is there some whitespace left?
+                if (whitespace) {
+                    newMatchText = addLeadingWhitespace(whitespace, newMatchText);
+                }
+            }
+
+            thisMatchText += newMatchText + "\n";
+            
+            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
+                requiredFiles[fileName] = true;
+            }
         }
 
         thisMatchText = thisMatchText || original;
@@ -169,12 +189,23 @@ function replaceStringByIndices(string, start, end, replacement) {
     return string.substring(0, start) + replacement + string.substring(end);
 }
 
+function addLeadingWhitespace(whitespace, string) {
+    return string.split("\n").map(function(line) {
+        return whitespace + line;
+    }).join("\n");
+}
+
 //We can't use lo-dash's union function because it wouldn't support this: ["*.js", "app.js"], which requires app.js to come last
 function union(arr1, arr2) {
-    if (arr1.length === 0) return arr2;
+    if (arr1.length == 0) {
+        return arr2;
+    }
+    
     var index;
     for (var i = 0; i < arr2.length; i++) {
-        if ((index = arr1.indexOf(arr2[i])) !== -1) arr1.splice(index, 1)
+        if ((index = arr1.indexOf(arr2[i])) !== -1) {
+            arr1.splice(index, 1);
+        }
     }
     return arr1.concat(arr2);
 }

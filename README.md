@@ -10,7 +10,7 @@ First, install `gulp-include` as a dev dependency:
 `npm install --save-dev gulp-include`
 
 Then, add your _include-comments_ to your file.  
-_People who have experience with `sprockets` or `snockets` will feel at home._ 
+_People who have experience with `sprockets` or `snockets` will feel at home._
 
 
 An _include-comment_ looks like this:
@@ -28,7 +28,7 @@ or to get even crazier, an array glob similar to commonly used in GruntJS:
 ```
 
 (Note: for those of you unfamiliar with the above syntax, check out https://github.com/isaacs/node-glob
-or http://gruntjs.com/configuring-tasks#globbing-patterns) 
+or http://gruntjs.com/configuring-tasks#globbing-patterns)
 
 You can do all of this in any language, the only requirement is that the first character
  on the line after any #, /, or white space characters is an equal sign.
@@ -42,14 +42,14 @@ This plugin recursively expand files it includes, so you can nest includes insid
 
 `main.js`:
 ```
-//= include included_file.js 
+//= include included_file.js
 ```
 
 `included_file.js`:
 ```
 //= include recursive_include.js
 ```
-And so on recursively to an arbitrary depth. 
+And so on recursively to an arbitrary depth.
 
 The example below compiles a several coffee-files and js-files into a single js-file:
 
@@ -102,6 +102,9 @@ gulp.task("default", "scripts");
 
 
 ## Release log
+#### 1.1.0
+* Merged feature: Keep leading whitespaces by [maxgalbu](https://github.com/maxgalbu)
+
 #### 1.0.1
 * Fixed issue which caused extensions to be "remembered" if `gulp-include` ran multiple times in a row, resulting in lost includes
 
