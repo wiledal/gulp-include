@@ -7,6 +7,7 @@ var fs = require('fs'),
 
 
 var DIRECTIVE_REGEX = /^[\/\s#]*?=\s*?((?:require|include)(?:_tree|_directory)?)\s+(.*$)/mg;
+var COMMENT_REGEX = /\s*([^\s=]+)\s*=/;
 
 var requiredFiles = {},
     extensions = [],
@@ -54,7 +55,8 @@ function expand(fileContents, filePath) {
     var regexMatch,
         matches = [],
         returnText = fileContents,
-        i, j;
+        delta = 0,
+        i = 0, j, max;
 
     DIRECTIVE_REGEX.lastIndex = 0;
 
@@ -62,13 +64,15 @@ function expand(fileContents, filePath) {
         matches.push(regexMatch);
     }
 
-    i = matches.length;
-    while (i--) {
-        var match = matches[i],
+    max = matches.length;
+    while (i++ < max) {
+        var match = matches[i-1],
             original = match[0],
             directiveType = match[1],
-            start = match.index,
+            originalFilename = match[2],
+            start = match.index + delta,
             end = start + original.length,
+            comment = getCommentStyle(original),
             thisMatchText = "",
             newMatchText = "",
             files = globMatch(match, filePath),
@@ -81,9 +85,14 @@ function expand(fileContents, filePath) {
 
         for (j = 0; j < files.length; j++) {
             fileName = files[j];
-            newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
 
-            //Try to retain the same indent level from the original include line
+            if (directiveType.indexOf('require') !== -1 && requiredFiles[fileName]) {
+                newMatchText = comment + ' [gulp-include] -- Skipping \'' + originalFilename + '\', already included.';
+            } else {
+                newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
+            }
+
+           //Try to retain the same indent level from the original include line
             whitespace = original.match(/^\s+/);
             if (whitespace) {
                 //Discard newlines
@@ -105,6 +114,9 @@ function expand(fileContents, filePath) {
         thisMatchText = thisMatchText || original;
 
         returnText = replaceStringByIndices(returnText, start, end, thisMatchText);
+        
+        // push start to match new length
+        delta += thisMatchText.length - original.length;
     }
 
     return returnText ? returnText : fileContents;
@@ -195,9 +207,14 @@ function addLeadingWhitespace(whitespace, string) {
     }).join("\n");
 }
 
+function getCommentStyle(string) {
+    var matches = COMMENT_REGEX.exec(string);
+    return (matches) ? matches[1] : '';
+}
+
 //We can't use lo-dash's union function because it wouldn't support this: ["*.js", "app.js"], which requires app.js to come last
 function union(arr1, arr2) {
-    if (arr1.length == 0) {
+    if (arr1.length === 0) {
         return arr2;
     }
     

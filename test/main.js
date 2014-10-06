@@ -257,6 +257,25 @@ describe("gulp-include", function () {
             testInclude.write(file)
         })
 
+        it("should include required files only once", function (done) {
+            var file = new gutil.File({
+                base: "test/fixtures/require/",
+                path: "test/fixtures/require/app.js",
+                contents: fs.readFileSync("test/fixtures/require/app.js")
+            });
+
+
+            var testInclude = include()
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile)
+                should.exist(newFile.contents)
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/require.js'), "utf8"))
+                done()
+            })
+            testInclude.write(file)
+        })
+
         it("should include files with a absolute path", function (done) {
             var file = new gutil.File({
                 base: "test/fixtures/absolute/",
