@@ -41,6 +41,7 @@ module.exports = function (params) {
         }
 
         if (file.isBuffer()) {
+            requiredFiles = {};
             var newText = expand(String(file.contents), file.path);
             file.contents = new Buffer(newText);
         }
