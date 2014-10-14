@@ -25,7 +25,7 @@ module.exports = function (params) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
     }
     if (params.basePath) {
-        basePath = typeof params.basePath === 'string' ? path.normalize(process.cwd() + '/' + params.basePath) : '';
+        basePath = typeof params.basePath === 'string' ? path.normalize(process.cwd() + path.sep + params.basePath) : '';
     }
     if (params.autoExtension) {
         autoExtension = typeof params.autoExtension === 'boolean' ? params.autoExtension : false;
@@ -88,7 +88,7 @@ function expand(fileContents, filePath) {
             fileName = files[j];
 
             if (directiveType.indexOf('require') !== -1 && requiredFiles[fileName]) {
-                newMatchText = comment + ' [gulp-include] -- Skipping \'' + originalFilename + '\', already included.';
+                newMatchText = comment + ' [gulp-include] -- Skipping ' + originalFilename + ', already included.';
             } else {
                 newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
             }
@@ -154,13 +154,14 @@ function globMatch(match, filePath) {
             globs.push(relativeFilePath);
         }
 
-        for (var i = 0; i < globs.length; i++) {
-            var globFiles = _internalGlob(globs[i], filePath);
+        var j;
+        for (j = 0; j < globs.length; j++) {
+            var globFiles = _internalGlob(globs[j], filePath);
             files = union(files, globFiles);
         }
 
-        for (var i = 0; i < negations.length; i++) {
-            var negationFiles = _internalGlob(negations[i].substring(1), filePath);
+        for (j = 0; j < negations.length; j++) {
+            var negationFiles = _internalGlob(negations[j].substring(1), filePath);
             files = difference(files, negationFiles);
         }
     }
