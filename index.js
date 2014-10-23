@@ -17,6 +17,8 @@ module.exports = function (params) {
     var params = params || {};
     requiredFiles = {};
     extensions = [];
+    prependCache = '';
+    appendCache = '';
 
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
@@ -130,6 +132,10 @@ function globMatch(match, filePath) {
     }
 
     if (directiveType === 'require' || directiveType === 'include' || directiveType.indexOf('codekit') !== -1) {
+        if (relativeFilePath.charAt(0).match(/['"]/g)) {
+            // optional [] on multiple files
+            relativeFilePath = '[' + relativeFilePath + ']';
+        }
         if (relativeFilePath.charAt(0) === '[') {
             relativeFilePath = eval(relativeFilePath);
             for (var i = 0; i < relativeFilePath.length; i++) {
