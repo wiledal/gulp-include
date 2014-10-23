@@ -89,6 +89,15 @@ gulp.task("scripts", function() {
 gulp.task("default", "scripts");
 ```
 
+## Prepend and Append
+We support prepend and append to the file with the codekit syntax:
+
+```javascript
+// @codekit-prepend relative/path/to/file.js
+// @codekit-append relative/path/to/file.js
+// @codekit-prepend "relative/path/to/file.js ", "relative/path/to/file.js "
+```
+
 ## Options
 * `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`

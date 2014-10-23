@@ -9,9 +9,7 @@ var PREPEND_REGEX = /^[\/\s#]*\s*?((?:@codekit-prepend))\s+(.*$)/mg;
 var APPEND_REGEX = /^[\/\s#]*\s*?((?:@codekit-append))\s+(.*$)/mg;
 
 var requiredFiles = {},
-    extensions = [],
-    prependCache = '',
-    appendCache = '';
+    extensions = [];
 
 module.exports = function (params) {
     var params = params || {};
