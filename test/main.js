@@ -6,7 +6,7 @@ var gutil = require("gulp-util"),
 
 
 // TEST DESCRIPTIONS
-describe("gulp-include", function () {
+describe("gulp-nwayo-include", function () {
 
     describe("directive matching", function () {
         // Load the module indirectly, so that we can access
@@ -19,59 +19,59 @@ describe("gulp-include", function () {
             module: {
                 exports: exports
             }
-        }
-        vm.runInNewContext(fs.readFileSync('index.js'), include_module)
+        };
+        vm.runInNewContext(fs.readFileSync('index.js'), include_module);
 
         beforeEach(function (done) {
-            include_module.DIRECTIVE_REGEX.lastIndex = 0
-            done()
-        })
+            include_module.DIRECTIVE_REGEX.lastIndex = 0;
+            done();
+        });
 
         it("should match require", function () {
-            matches = include_module.DIRECTIVE_REGEX.exec("= require src/blah.js")
-            should.exist(matches)
-            matches[0].should.eql('= require src/blah.js')
-            matches[1].should.eql('require')
-            matches[2].should.eql('src/blah.js')
-        })
+            matches = include_module.DIRECTIVE_REGEX.exec("= require src/blah.js");
+            should.exist(matches);
+            matches[0].should.eql('= require src/blah.js');
+            matches[1].should.eql('require');
+            matches[2].should.eql('src/blah.js');
+        });
 
         it("should match require_tree", function () {
-            matches = include_module.DIRECTIVE_REGEX.exec("= require_tree src")
-            should.exist(matches)
-            matches[0].should.eql('= require_tree src')
-            matches[1].should.eql('require_tree')
-            matches[2].should.eql('src')
-        })
+            matches = include_module.DIRECTIVE_REGEX.exec("= require_tree src");
+            should.exist(matches);
+            matches[0].should.eql('= require_tree src');
+            matches[1].should.eql('require_tree');
+            matches[2].should.eql('src');
+        });
 
         it("should match include", function () {
-            should.exist(matches)
-            matches = include_module.DIRECTIVE_REGEX.exec("= include src/blah.js")
-            matches[0].should.eql('= include src/blah.js')
-            matches[1].should.eql('include')
-            matches[2].should.eql('src/blah.js')
-        })
+            should.exist(matches);
+            matches = include_module.DIRECTIVE_REGEX.exec("= include src/blah.js");
+            matches[0].should.eql('= include src/blah.js');
+            matches[1].should.eql('include');
+            matches[2].should.eql('src/blah.js');
+        });
 
         it("should match include_tree", function () {
-            matches = include_module.DIRECTIVE_REGEX.exec("= include_tree src")
-            should.exist(matches)
-            matches[0].should.eql('= include_tree src')
-            matches[1].should.eql('include_tree')
-            matches[2].should.eql('src')
-        })
+            matches = include_module.DIRECTIVE_REGEX.exec("= include_tree src");
+            should.exist(matches);
+            matches[0].should.eql('= include_tree src');
+            matches[1].should.eql('include_tree');
+            matches[2].should.eql('src');
+        });
 
         it("should not match 'var x = require(blah)'", function () {
-            matches = include_module.DIRECTIVE_REGEX.exec("var x = require('fakemod')")
-            should.not.exist(matches)
-        })
+            matches = include_module.DIRECTIVE_REGEX.exec("var x = require('fakemod')");
+            should.not.exist(matches);
+        });
 
         it("should match relative requires", function () {
-            matches = include_module.DIRECTIVE_REGEX.exec("= include ../src/blah.js")
-            should.exist(matches)
-            matches[0].should.eql('= include ../src/blah.js')
-            matches[1].should.eql('include')
-            matches[2].should.eql('../src/blah.js')
-        })
-    })
+            matches = include_module.DIRECTIVE_REGEX.exec("= include ../src/blah.js");
+            should.exist(matches);
+            matches[0].should.eql('= include ../src/blah.js');
+            matches[1].should.eql('include');
+            matches[2].should.eql('../src/blah.js');
+        });
+    });
 
     describe("File replacing", function () {
 
@@ -87,7 +87,7 @@ describe("gulp-include", function () {
                 should.exist(newFile);
                 should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/app_all_extensions.js"), "utf8"))
+                String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/app_all_extensions.js"), "utf8"));
                 done();
             });
             testInclude.write(file);
@@ -107,7 +107,7 @@ describe("gulp-include", function () {
                 should.exist(newFile);
                 should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/app_only_txt.js"), "utf8"))
+                String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/app_only_txt.js"), "utf8"));
                 done();
             });
             testInclude.write(file);
@@ -127,7 +127,7 @@ describe("gulp-include", function () {
                 should.exist(newFile);
                 should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/app_multiple_extensions.js"), "utf8"))
+                String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/app_multiple_extensions.js"), "utf8"));
                 done();
             });
             testInclude.write(file);
@@ -143,16 +143,16 @@ describe("gulp-include", function () {
 
             testInclude = include({
                 extensions: ['js']
-            })
+            });
             testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
+                should.exist(newFile);
+                should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/relative.js'), "utf8"))
-                done()
-            })
-            testInclude.write(file)
-        })
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/relative.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
         it("Should work on recursive includes", function (done) {
             var file = new gutil.File({
@@ -164,16 +164,16 @@ describe("gulp-include", function () {
 
             testInclude = include({
                 extensions: ['js']
-            })
+            });
             testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
+                should.exist(newFile);
+                should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/app_recursive.js'), "utf8"))
-                done()
-            })
-            testInclude.write(file)
-        })
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/app_recursive.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
         it("Should work on glob includes", function (done) {
             var file = new gutil.File({
@@ -185,16 +185,16 @@ describe("gulp-include", function () {
 
             testInclude = include({
                 extensions: ['js']
-            })
-            testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
-
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/app_globs.js'), "utf8"))
-                done()
             });
-            testInclude.write(file)
-        })
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile);
+                should.exist(newFile.contents);
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/app_globs.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
         it("Should match leading whitespace", function (done) {
             var file = new gutil.File({
@@ -206,17 +206,17 @@ describe("gulp-include", function () {
 
             var testInclude = include({
                 extensions: 'js'
-            })
-            testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
-
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/whitespace.js'), "utf8"))
-                done()
             });
-            testInclude.write(file)
-        })
-        
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile);
+                should.exist(newFile.contents);
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/whitespace.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
+
         it("Should retain origin file's leading whitespace", function (done) {
             var file = new gutil.File({
                 base: "test/fixtures/whitespace/",
@@ -227,16 +227,16 @@ describe("gulp-include", function () {
 
             var testInclude = include({
                 extensions: 'js'
-            })
-            testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
-
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/whitespace_origin.js'), "utf8"))
-                done()
             });
-            testInclude.write(file)
-        })
+            testInclude.on("data", function (newFile) {
+                should.exist(newFile);
+                should.exist(newFile.contents);
+
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/whitespace_origin.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
         it("Should work with css files", function (done) {
             var file = new gutil.File({
@@ -248,14 +248,14 @@ describe("gulp-include", function () {
 
             var testInclude = include();
             testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
+                should.exist(newFile);
+                should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/styles.css'), "utf8"))
-                done()
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/styles.css'), "utf8"));
+                done();
             });
-            testInclude.write(file)
-        })
+            testInclude.write(file);
+        });
 
         it("should include required files only once", function (done) {
             var file = new gutil.File({
@@ -265,16 +265,16 @@ describe("gulp-include", function () {
             });
 
 
-            var testInclude = include()
+            var testInclude = include();
             testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
+                should.exist(newFile);
+                should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/require.js'), "utf8"))
-                done()
-            })
-            testInclude.write(file)
-        })
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/require.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
         it("should include files with a absolute path", function (done) {
             var file = new gutil.File({
@@ -287,16 +287,16 @@ describe("gulp-include", function () {
             var testInclude = include({
                 basePath: 'test/fixtures/',
                 autoExtension: false
-           })
+           });
             testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
+                should.exist(newFile);
+                should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/absolute.js'), "utf8"))
-                done()
-            })
-            testInclude.write(file)
-        })
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/absolute.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
         it("should include files with a default extension", function (done) {
             var file = new gutil.File({
@@ -308,16 +308,16 @@ describe("gulp-include", function () {
 
             var testInclude = include({
                 autoExtension: true
-            })
+            });
             testInclude.on("data", function (newFile) {
-                should.exist(newFile)
-                should.exist(newFile.contents)
+                should.exist(newFile);
+                should.exist(newFile.contents);
 
-                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/auto-extension.js'), "utf8"))
-                done()
-            })
-            testInclude.write(file)
-        })
+                String(newFile.contents).should.equal(String(fs.readFileSync('test/expected/auto-extension.js'), "utf8"));
+                done();
+            });
+            testInclude.write(file);
+        });
 
-    })
+    });
 });

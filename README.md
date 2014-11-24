@@ -1,15 +1,17 @@
-#gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
->Makes inclusion of files a breeze.  
+#gulp-nwayo-include [![NPM version][npm-image]][npm-url]
+[![Travis build][travis-image]][travis-url] [![Dependencies][david-dep-image]][david-dep-url] [![Dev dependencies][david-devdep-image]][david-devdep-url]
+
+>Makes inclusion of files a breeze.
 Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.
 
 > Made for gulp 3
 
 
 ## Usage
-First, install `gulp-include` as a dev dependency:
-`npm install --save-dev gulp-include`
+First, install `gulp-nwayo-include` as a dev dependency:
+`npm install --save-dev gulp-nwayo-include`
 
-Then, add your _include-comments_ to your file.  
+Then, add your _include-comments_ to your file.
 _People who have experience with `sprockets` or `snockets` will feel at home._
 
 
@@ -35,7 +37,7 @@ You can do all of this in any language, the only requirement is that the first c
 ```coffeescript
 #= require_tree relative/path/to/directory
 ```
-`gulp-include` disregards whitespace, as long as the comment-line starts with a _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
+`gulp-nwayo-include` disregards whitespace, as long as the comment-line starts with a _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
 
 This plugin recursively expand files it includes, so you can nest includes inside of files that
     were themselves included. IE:
@@ -76,7 +78,7 @@ window.main = new Main()
 
 ```javascript
 var gulp		= require('gulp'),
-	include		= require('gulp-include'),
+	include		= require('gulp-nwayo-include'),
 	coffee		= require('gulp-coffee');
 
 gulp.task("scripts", function() {
@@ -88,6 +90,30 @@ gulp.task("scripts", function() {
 
 gulp.task("default", "scripts");
 ```
+
+
+### jshtml
+```javascript
+//= jshtml relative/path/to/file
+```
+or if you want to get a directory
+```javascript
+//= jshtml_directory relative/path/to/directory
+```
+
+#### Example
+The example below compiles several jsrender files into a single js-file:
+
+`app.js`:
+
+```javascript
+//= jshtml common/templates/item
+//= jshtml_directory cart/templates
+
+app.tmpl.common_item.render();
+app.tmpl.cart_list1.render();
+```
+
 
 ## Options
 * `extensions` (optional)
@@ -101,63 +127,28 @@ gulp.task("default", "scripts");
 	* If set, all inclusions will automatically have the current file extension added to them
 
 
-## Release log
-#### 1.1.0
-* Merged feature: Keep leading whitespaces by [maxgalbu](https://github.com/maxgalbu)
+## Documentation
+Visit the [http://absolunet.github.io/nwayo](http://absolunet.github.io/nwayo) website for all the things.
 
-#### 1.0.1
-* Fixed issue which caused extensions to be "remembered" if `gulp-include` ran multiple times in a row, resulting in lost includes
+## Release history
+Forked from gulp-include [v1.1.0](https://github.com/wiledal/gulp-include/commit/c1e06c2c6ba76af9f00548675b817719a90a9f86)
+See the [CHANGELOG](https://github.com/absolunet/gulp-nwayo-include/blob/master/CHANGELOG.md).
 
-#### 1.0.0
-* Merged major refactoring by [scottmas](https://github.com/scottmas) - Many thanks!
-	* Rewritten core (regex, replacing and file mashing)
-	* Glob support
-	* Recursive support
-	* Respecting indentation of included files
-
-* Upping version to 1.0.0 - seems fitting after such a large refactor
-
-#### 0.2.3
-* Merged community fixes by [platdesign](https://github.com/platdesign) and [cujojp](https://github.com/cujojp)
-
-#### 0.2.2
-* Updated regex directive to not collide with other requireing plugins, like browserify ([cwacek](https://github.com/cwacek))
-
-#### 0.2.1
-* Changed replace-method to fix issue when requiring a file that contained special characters ([juanghurtado](https://github.com/juanghurtado))
-
-#### 0.2.0
-* Added `require_tree`/`include_tree` (Thanks to [juanghurtado](https://github.com/juanghurtado)!)
-* Method now takes an `extensions` param for controlling what types of files to include
-
-#### 0.1.0
-* Basic include
-
-## Licence
-(MIT License)
-
-Copyright (c) 2014 Hugo Wiledal
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## License
+See the [LICENSE](https://github.com/absolunet/gulp-nwayo-include/blob/master/LICENSE.md).
 
 
-[travis-image]: https://api.travis-ci.org/wiledal/gulp-include.png?branch=master
 
-[npm-url]: https://npmjs.org/package/gulp-include
-[npm-image]: https://badge.fury.io/js/gulp-include.png
+
+[travis-url]: https://travis-ci.org/absolunet/gulp-nwayo-include/builds
+[travis-image]: http://img.shields.io/travis/absolunet/gulp-nwayo-include.svg?style=flat
+
+[david-dep-url]: https://david-dm.org/absolunet/gulp-nwayo-include
+[david-dep-image]: http://img.shields.io/david/absolunet/gulp-nwayo-include.svg?style=flat
+
+[david-devdep-url]: https://david-dm.org/absolunet/gulp-nwayo-include
+[david-devdep-image]: http://img.shields.io/david/dev/absolunet/gulp-nwayo-include.svg?style=flat
+
+[npm-url]: https://npmjs.org/package/gulp-nwayo-include
+[npm-image]: http://img.shields.io/npm/v/gulp-nwayo-include.svg?style=flat
+
