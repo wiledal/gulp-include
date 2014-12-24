@@ -85,7 +85,7 @@ function expand(fileContents, filePath) {
             }
 
             thisMatchText += newMatchText + "\n";
-            
+
             if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
                 requiredFiles[fileName] = true;
             }
@@ -136,7 +136,7 @@ function globMatch(match, filePath) {
         }
 
         for (var i = 0; i < negations.length; i++) {
-            var negationFiles = _internalGlob(negations[i].substring(1), filePath);
+            var negationFiles = _internalGlob(negations[i], filePath);
             files = difference(files, negationFiles);
         }
     }
@@ -189,7 +189,7 @@ function union(arr1, arr2) {
     if (arr1.length == 0) {
         return arr2;
     }
-    
+
     var index;
     for (var i = 0; i < arr2.length; i++) {
         if ((index = arr1.indexOf(arr2[i])) !== -1) {
