@@ -95,6 +95,9 @@ gulp.task("default", "scripts");
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
 ## Release log
+#### 1.1.1
+* Merged community fix by [trolev](https://github.com/trolev)
+
 #### 1.1.0
 * Merged feature: Keep leading whitespaces by [maxgalbu](https://github.com/maxgalbu)
 
