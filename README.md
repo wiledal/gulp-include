@@ -98,7 +98,9 @@ gulp.task("default", "scripts");
 An array of files included (useful for watching) can be produced by using the
 `files` function. For example:
 ```javascript
-var include = require('gulp-include');
+var gulp		= require('gulp'),
+	include		= require('gulp-include'),
+	coffee		= require('gulp-coffee');
 
 gulp.task("scripts", function() {
 	gulp.src('src/js/app.coffee')
