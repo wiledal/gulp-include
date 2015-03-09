@@ -39,6 +39,25 @@ module.exports = function (params) {
     return es.map(include)
 };
 
+module.exports.files = function(files, params) {
+    var params = params || {},
+        f, files, fullFiles;
+    extensions = [];
+        
+    files = _internalGlob(files, ''),
+    fullFiles = [].concat(files);
+
+    if (params.extensions) {
+        extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
+    }
+  
+    for (f in files) {
+        fullFiles = union(fullFiles, getFiles(files[f]));
+    }
+
+    return fullFiles;
+}
+
 function expand(fileContents, filePath) {
     var regexMatch,
         matches = [],
@@ -97,6 +116,32 @@ function expand(fileContents, filePath) {
     }
 
     return returnText ? returnText : fileContents;
+}
+
+function getFiles(fileName) {
+    var regexMatch,
+        matches = [],
+        fullFiles = [],
+        i, j;
+
+    DIRECTIVE_REGEX.lastIndex = 0;
+
+    while (regexMatch = DIRECTIVE_REGEX.exec(String(fs.readFileSync(fileName)))) {
+        matches.push(regexMatch);
+    }
+
+    i = matches.length;
+    while (i--) {
+        var match = matches[i],
+            files = globMatch(match, fileName),
+            fullFiles = union(fullFiles, files);
+
+        for (j = 0; j < files.length; j++) {
+            fullFiles = union(fullFiles, getFiles(files[j]));
+        }
+    }
+
+    return fullFiles;
 }
 
 function globMatch(match, filePath) {

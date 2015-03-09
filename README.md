@@ -94,6 +94,27 @@ gulp.task("default", "scripts");
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
 	* If set, all inclusions that does not match the extension(s) will be ignored
 
+## File List
+An array of files included (useful for watching) can be produced by using the
+`files` function. For example:
+```javascript
+var include = require('gulp-include');
+
+gulp.task("scripts", function() {
+	gulp.src('src/js/app.coffee')
+		.pipe( include() )
+		.pipe( coffee() )
+		.pipe( gulp.dest("dist/js") )
+});
+
+gulp.task("scripts", function() {
+	gulp.watch(include.files('src/js/app.coffee'), ["scripts"])
+});
+
+gulp.task("default", ["scripts", "watch"]);
+});
+```
+
 ## Release log
 #### 1.1.1
 * Merged community fix by [trolev](https://github.com/trolev)

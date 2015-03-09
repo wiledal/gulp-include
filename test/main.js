@@ -73,6 +73,153 @@ describe("gulp-include", function () {
         })
     })
 
+    describe("File listing", function () {
+
+        it("should list the files from special comments", function () {
+            files = include.files("test/fixtures/app.js");
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/app.js",
+                "test/fixtures/lib/nested/deeply_nested/d.js",
+                "test/fixtures/lib/nested/deeply_nested/deeper/f.js",
+                "test/fixtures/lib/nested/deeply_nested/deeper/nested_txt.txt",
+                "test/fixtures/lib/nested/deeply_nested/deeper/nested_txt2.txt",
+                "test/fixtures/lib/nested/deeply_nested/e.js",
+                "test/fixtures/lib/nested/c.js",
+                "test/fixtures/lib/b.js",
+                "test/fixtures/lib/a.js",
+                "test/fixtures/header.txt",
+                "test/fixtures/sample.js"
+            ]);
+        });
+
+        it("should only list the files with the provided SINGLE extension", function () {
+            files = include.files("test/fixtures/app.js", {
+                extensions: "txt"
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/app.js",
+                "test/fixtures/lib/nested/deeply_nested/deeper/nested_txt.txt",
+                "test/fixtures/lib/nested/deeply_nested/deeper/nested_txt2.txt",
+                "test/fixtures/header.txt"
+            ]);
+        });
+
+        it("should only include the files with the provided MULTIPLE extensions", function () {
+            files = include.files("test/fixtures/app.js", {
+                extensions: ["txt", "js"]
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/app.js",
+                "test/fixtures/lib/nested/deeply_nested/d.js",
+                "test/fixtures/lib/nested/deeply_nested/deeper/f.js",
+                "test/fixtures/lib/nested/deeply_nested/deeper/nested_txt.txt",
+                "test/fixtures/lib/nested/deeply_nested/deeper/nested_txt2.txt",
+                "test/fixtures/lib/nested/deeply_nested/e.js",
+                "test/fixtures/lib/nested/c.js",
+                "test/fixtures/lib/b.js",
+                "test/fixtures/lib/a.js",
+                "test/fixtures/header.txt",
+                "test/fixtures/sample.js"
+            ]);
+        });
+
+        it("should list files with a relative path", function () {
+            files = include.files("test/fixtures/relative/app.js", {
+                extensions: ['js']
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/relative/app.js",
+                "test/fixtures/sample.js"
+            ]);
+        })
+
+        it("Should work on recursive includes", function () {
+            files = include.files("test/fixtures/app_recursive.js", {
+                extensions: ['js']
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/app_recursive.js",
+                "test/fixtures/recursive/a.js",
+                "test/fixtures/recursive/b.js",
+                "test/fixtures/recursive/nested/c.js",
+                "test/fixtures/recursive/nested/deeply_nested/d.js",
+                "test/fixtures/recursive/nested/deeply_nested2/e.js"
+            ]);
+        })
+
+        it("Should work on glob includes", function () {
+            files = include.files("test/fixtures/globs/app.js", {
+                extensions: ['js']
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/globs/app.js",
+                "test/fixtures/globs/nested/b.js",
+                "test/fixtures/globs/nested/c.js",
+                "test/fixtures/globs/nested/nested_deeper/d.js",
+                "test/fixtures/globs/nested/a.js"
+            ]);
+        })
+
+        it("Should match leading whitespace", function () {
+            files = include.files("test/fixtures/whitespace/a.js", {
+                extensions: 'js'
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/whitespace/a.js",
+                "test/fixtures/whitespace/d.js",
+                "test/fixtures/whitespace/c.js",
+                "test/fixtures/whitespace/b.js"
+            ]);
+        })
+        
+        it("Should retain origin file's leading whitespace", function () {
+            files = include.files("test/fixtures/whitespace/a_origin.js", {
+                extensions: 'js'
+            });
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/whitespace/a_origin.js",
+                "test/fixtures/whitespace/d.js",
+                "test/fixtures/whitespace/b.js"
+            ]);
+        })
+
+        it("Should work with css files", function () {
+            files = include.files("test/fixtures/styles/a.css");
+
+            should.exist(files);
+
+            files.should.eql([
+                "test/fixtures/styles/a.css",
+                "test/fixtures/styles/b.css"
+            ]);
+        })
+
+    })
+
     describe("File replacing", function () {
 
         it("should replace special comments with file contents", function (done) {
