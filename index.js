@@ -39,12 +39,23 @@ module.exports = function (params) {
     return es.map(include)
 };
 
-module.exports.files = function(files, params) {
+module.exports.files = function(glob, params) {
     var params = params || {},
         f, files, fullFiles;
     extensions = [];
-        
-    files = _internalGlob(files, ''),
+ 
+ 		if (glob instanceof Array) {
+			var g;
+			files = [];
+			for (g in glob) {
+				files = union(files, _internalGlob(glob[g], ''));
+			}
+		} else if (typeof glob == "string") {
+    	files = _internalGlob(glob, '');
+		} else {
+			throw new TypeError('Glob must either be a string or an array of strings');
+		}
+
     fullFiles = [].concat(files);
 
     if (params.extensions) {
