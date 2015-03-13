@@ -9,7 +9,8 @@ var DIRECTIVE_REGEX = /^[\/\s#]*?=\s*?((?:require|include)(?:_tree|_directory)?)
 
 var requiredFiles = {},
     extensions = [],
-    includePaths = [];
+    includePaths = [],
+    basePath = path.resolve('./')+'/www/Neos/Packages';
 
 module.exports = function (params) {
     var params = params || {};
@@ -170,10 +171,10 @@ function _internalGlob(thisGlob, filePath) {
     files = glob.sync(fullPath, {
         mark: true
     });
+    console.log(files);
 
-    var thisGlobAdd = '',
-        folderPathAdd = '',
-        filesAdd = [];
+        console.log(files);
+    filesAdd = [];
     for (var i = includePaths.length - 1; i >= 0; i--) {
         thisGlobAdd = path.relative(path.dirname(filePath), includePaths[i])+thisGlob,
         folderPathAdd = path.dirname(filePath),
@@ -183,10 +184,13 @@ function _internalGlob(thisGlob, filePath) {
             mark: true
         });
         files = _arrayUnique(files.concat(filesAdd));
+        console.log(files);
         if ( filesAdd.length>0 ) {
+            console.log('break');
             break;
         }
     };
+    console.log('finished');
 
     files = files.filter(function (fileName) {
         var slashSplit = fileName.split(/[\\\/]/),
