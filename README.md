@@ -72,7 +72,7 @@ window.main = new Main()
 ```
 *Note:* The example above uses backticks (\`) to allow `gulp-coffee` to compile inline javascript
 
-`gulpfile.js`:
+`gulpfile.js default`:
 
 ```javascript
 var gulp		= require('gulp'),
@@ -89,12 +89,40 @@ gulp.task("scripts", function() {
 gulp.task("default", "scripts");
 ```
 
+`gulpfile.js with includePaths`:
+
+```javascript
+var gulp		= require('gulp'),
+	include		= require('gulp-include'),
+	coffee		= require('gulp-coffee'),
+    path		= require('path');
+
+gulp.task("scripts", function() {
+	gulp.src('src/js/app.coffee')
+		.pipe( include({
+			includePaths: [
+				path.resolve('./')+'/Neos/Packages/Plugins',
+				path.resolve('./')+'/Neos/Packages/Sites'
+			]
+		}) )
+		.pipe( coffee() )
+		.pipe( gulp.dest("dist/js") )
+});
+
+gulp.task("default", "scripts");
+```
+
 ## Options
 * `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
 	* If set, all inclusions that does not match the extension(s) will be ignored
+* `includePaths` (optional)
+	* Takes a `String` or an `Array` of absolute includePaths, eg: `"/Users/uname/project/Neos/Plugins"` or `["/Users/uname/project/Neos/Plugins", "/Users/uname/project/Neos/Sites"]`
 
 ## Release log
+#### fork
+* added functionality to use includePaths
+
 #### 1.1.1
 * Merged community fix by [trolev](https://github.com/trolev)
 
