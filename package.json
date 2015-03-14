@@ -5,7 +5,7 @@
   "homepage": "http://github.com/wiledal/gulp-include",
   "repository": {
     "type": "git",
-    "url": "git://github.com/wiledal/gulp-include.git"
+    "url": "git://github.com/sbruggmann/gulp-include.git"
   },
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,9 @@
   "author": {
     "name": "Hugo Wiledal"
   },
+  "contributors": [{
+    "name": "Stefan Bruggmann"
+  }],
   "license": "MIT",
   "devDependencies": {
     "gulp": "~3.3.4",
