@@ -1,8 +1,8 @@
 {
-  "name": "gulp-include",
+  "name": "gulp-include-sb",
   "version": "1.1.1",
-  "description": "Makes inclusion of files a breeze. Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.",
-  "homepage": "http://github.com/wiledal/gulp-include",
+  "description": "Makes inclusion of files a breeze. Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools. Fork with includePaths.",
+  "homepage": "http://github.com/sbruggmann/gulp-include",
   "repository": {
     "type": "git",
     "url": "git://github.com/sbruggmann/gulp-include.git"
