@@ -9,7 +9,8 @@ var DIRECTIVE_REGEX = /^[\/\s#]*?=\s*?((?:require|include)(?:_tree|_directory)?)
 
 var requiredFiles = {},
     extensions = [],
-    includePaths = [];
+    includePaths = [],
+    filesDone = [];
 
 module.exports = function (params) {
     var params = params || {};
@@ -56,8 +57,7 @@ function expand(fileContents, filePath) {
         matches.push(regexMatch);
     }
 
-    i = matches.length;
-    while (i--) {
+    for (var i = 0; i < matches.length; i++) {
         var match = matches[i],
             original = match[0],
             directiveType = match[1],
@@ -73,32 +73,37 @@ function expand(fileContents, filePath) {
             thisMatchText += original + "\n";
         }
 
+        returnTextBefore = returnText;
         for (j = 0; j < files.length; j++) {
-            fileName = files[j];
-            newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
+            if ( filesDone.indexOf(files[j])<0 ) {
+                filesDone.push(files[j]);
 
-            //Try to retain the same indent level from the original include line
-            whitespace = original.match(/^\s+/);
-            if (whitespace) {
-                //Discard newlines
-                whitespace = whitespace[0].replace("\n", "");
+                fileName = files[j];
+                newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
 
-                //Is there some whitespace left?
+                //Try to retain the same indent level from the original include line
+                whitespace = original.match(/^\s+/);
                 if (whitespace) {
-                    newMatchText = addLeadingWhitespace(whitespace, newMatchText);
+                    //Discard newlines
+                    whitespace = whitespace[0].replace("\n", "");
+
+                    //Is there some whitespace left?
+                    if (whitespace) {
+                        newMatchText = addLeadingWhitespace(whitespace, newMatchText);
+                    }
                 }
-            }
 
-            thisMatchText += newMatchText + "\n";
+                thisMatchText += newMatchText + "\n";
 
-            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
-                requiredFiles[fileName] = true;
+                if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
+                    requiredFiles[fileName] = true;
+                }
+                returnText = returnText.replace(match[0], thisMatchText);
+            }else{
+                returnText = returnText.replace(match[0], '/* already included: '+match[2]+' */');
             }
         }
 
-        thisMatchText = thisMatchText || original;
-
-        returnText = replaceStringByIndices(returnText, start, end, thisMatchText);
     }
 
     return returnText ? returnText : fileContents;
@@ -145,7 +150,6 @@ function globMatch(match, filePath) {
             files = difference(files, negationFiles);
         }
     }
-
 
     return files;
 }
