@@ -16,7 +16,8 @@ module.exports = function (params) {
     var params = params || {};
     requiredFiles = {};
     extensions = [];
-    includePaths = [];
+    includePaths = [],
+    filesDone = [];
 
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
@@ -100,7 +101,7 @@ function expand(fileContents, filePath) {
                 }
                 returnText = returnText.replace(match[0], thisMatchText);
             }else{
-                returnText = returnText.replace(match[0], '/* already included: '+match[2]+' */');
+                returnText = returnText.replace(match[0], '/* already included: '+match[2].replace(/\//g, '-')+' */');
             }
         }
 
