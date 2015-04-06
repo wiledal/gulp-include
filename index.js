@@ -8,15 +8,22 @@ var fs = require('fs'),
 var DIRECTIVE_REGEX = /^[\/\s#]*?=\s*?((?:require|include)(?:_tree|_directory)?)\s+(.*$)/mg;
 
 var requiredFiles = {},
-    extensions = [];
+    extensions = [],
+    includePaths = [],
+    filesDone = [];
 
 module.exports = function (params) {
     var params = params || {};
     requiredFiles = {};
     extensions = [];
+    includePaths = [],
+    filesDone = [];
 
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
+    }
+    if (params.includePaths) {
+        includePaths = typeof params.includePaths === 'string' ? [params.includePaths] : params.includePaths;
     }
 
     function include(file, callback) {
@@ -51,8 +58,7 @@ function expand(fileContents, filePath) {
         matches.push(regexMatch);
     }
 
-    i = matches.length;
-    while (i--) {
+    for (var i = 0; i < matches.length; i++) {
         var match = matches[i],
             original = match[0],
             directiveType = match[1],
@@ -68,32 +74,37 @@ function expand(fileContents, filePath) {
             thisMatchText += original + "\n";
         }
 
+        returnTextBefore = returnText;
         for (j = 0; j < files.length; j++) {
-            fileName = files[j];
-            newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
+            if ( filesDone.indexOf(files[j])<0 ) {
+                filesDone.push(files[j]);
 
-            //Try to retain the same indent level from the original include line
-            whitespace = original.match(/^\s+/);
-            if (whitespace) {
-                //Discard newlines
-                whitespace = whitespace[0].replace("\n", "");
+                fileName = files[j];
+                newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
 
-                //Is there some whitespace left?
+                //Try to retain the same indent level from the original include line
+                whitespace = original.match(/^\s+/);
                 if (whitespace) {
-                    newMatchText = addLeadingWhitespace(whitespace, newMatchText);
+                    //Discard newlines
+                    whitespace = whitespace[0].replace("\n", "");
+
+                    //Is there some whitespace left?
+                    if (whitespace) {
+                        newMatchText = addLeadingWhitespace(whitespace, newMatchText);
+                    }
                 }
-            }
 
-            thisMatchText += newMatchText + "\n";
+                thisMatchText += newMatchText + "\n";
 
-            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
-                requiredFiles[fileName] = true;
+                if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
+                    requiredFiles[fileName] = true;
+                }
+                returnText = returnText.replace(match[0], thisMatchText);
+            }else{
+                returnText = returnText.replace(match[0], '/* already included: '+match[2].replace(/\//g, '-')+' */');
             }
         }
 
-        thisMatchText = thisMatchText || original;
-
-        returnText = replaceStringByIndices(returnText, start, end, thisMatchText);
     }
 
     return returnText ? returnText : fileContents;
@@ -141,9 +152,20 @@ function globMatch(match, filePath) {
         }
     }
 
-
     return files;
 }
+
+function _arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
 
 function _internalGlob(thisGlob, filePath) {
     var folderPath = path.dirname(filePath),
@@ -153,6 +175,23 @@ function _internalGlob(thisGlob, filePath) {
     files = glob.sync(fullPath, {
         mark: true
     });
+
+    var thisGlobAdd = '',
+        folderPathAdd = '',
+        filesAdd = [];
+    for (var i = includePaths.length - 1; i >= 0; i--) {
+        thisGlobAdd = path.relative(path.dirname(filePath), includePaths[i])+thisGlob,
+        folderPathAdd = path.dirname(filePath),
+            fullPathAdd = path.join(folderPathAdd, thisGlobAdd.replace(/['"]/g, ''));
+
+        filesAdd = glob.sync(fullPathAdd, {
+            mark: true
+        });
+        files = _arrayUnique(files.concat(filesAdd));
+        if ( filesAdd.length>0 ) {
+            break;
+        }
+    };
 
     files = files.filter(function (fileName) {
         var slashSplit = fileName.split(/[\\\/]/),

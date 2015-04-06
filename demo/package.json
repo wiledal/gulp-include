@@ -1,0 +1,8 @@
+{
+  "name": "gulp-include-demo",
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-include": "git://github.com/sbruggmann/gulp-include",
+    "path": "*"
+  }
+}
