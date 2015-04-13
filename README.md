@@ -1,5 +1,5 @@
 #gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
->Makes inclusion of files a breeze.  
+>Makes inclusion of files a breeze.
 Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.
 
 > Made for gulp 3
@@ -9,7 +9,7 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 First, install `gulp-include` as a dev dependency:
 `npm install --save-dev gulp-include`
 
-Then, add your _include-comments_ to your file.  
+Then, add your _include-comments_ to your file.
 _People who have experience with `sprockets` or `snockets` will feel at home._
 
 
@@ -87,6 +87,15 @@ gulp.task("scripts", function() {
 });
 
 gulp.task("default", "scripts");
+```
+
+## Prepend and Append
+We support prepend and append to the file with the codekit syntax:
+
+```javascript
+// @codekit-prepend relative/path/to/file.js
+// @codekit-append relative/path/to/file.js
+// @codekit-prepend "relative/path/to/file.js ", "relative/path/to/file.js "
 ```
 
 ## Options

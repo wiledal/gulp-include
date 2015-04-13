@@ -4,8 +4,9 @@ var fs = require('fs'),
     gutil = require('gulp-util'),
     glob = require('glob');
 
-
 var DIRECTIVE_REGEX = /^[\/\s#]*?=\s*?((?:require|include)(?:_tree|_directory)?)\s+(.*$)/mg;
+var PREPEND_REGEX = /^[\/\s#]*\s*?((?:@codekit-prepend))\s+(.*$)/mg;
+var APPEND_REGEX = /^[\/\s#]*\s*?((?:@codekit-append))\s+(.*$)/mg;
 
 var requiredFiles = {},
     extensions = [];
@@ -14,6 +15,8 @@ module.exports = function (params) {
     var params = params || {};
     requiredFiles = {};
     extensions = [];
+    prependCache = '';
+    appendCache = '';
 
     if (params.extensions) {
         extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
@@ -29,7 +32,11 @@ module.exports = function (params) {
         }
 
         if (file.isBuffer()) {
-            var newText = expand(String(file.contents), file.path);
+            var newText = expand(String(file.contents), file.path, DIRECTIVE_REGEX);
+            newText = expand(newText, file.path, PREPEND_REGEX);
+            newText = prependCache + newText;
+            newText = expand(newText, file.path, APPEND_REGEX);
+            newText = newText + appendCache;
             file.contents = new Buffer(newText);
         }
 
@@ -39,15 +46,15 @@ module.exports = function (params) {
     return es.map(include)
 };
 
-function expand(fileContents, filePath) {
+function expand(fileContents, filePath, regex) {
     var regexMatch,
         matches = [],
         returnText = fileContents,
         i, j;
 
-    DIRECTIVE_REGEX.lastIndex = 0;
+    regex.lastIndex = 0;
 
-    while (regexMatch = DIRECTIVE_REGEX.exec(fileContents)) {
+    while (regexMatch = regex.exec(fileContents)) {
         matches.push(regexMatch);
     }
 
@@ -70,7 +77,7 @@ function expand(fileContents, filePath) {
 
         for (j = 0; j < files.length; j++) {
             fileName = files[j];
-            newMatchText = expand(String(fs.readFileSync(fileName)), fileName);
+            newMatchText = expand(String(fs.readFileSync(fileName)), fileName, regex);
 
             //Try to retain the same indent level from the original include line
             whitespace = original.match(/^\s+/);
@@ -86,14 +93,20 @@ function expand(fileContents, filePath) {
 
             thisMatchText += newMatchText + "\n";
 
-            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1) {
+            if (directiveType.indexOf('require') !== -1 || directiveType.indexOf('include') !== -1 || directiveType.indexOf('codekit') !== -1) {
                 requiredFiles[fileName] = true;
             }
         }
 
         thisMatchText = thisMatchText || original;
 
-        returnText = replaceStringByIndices(returnText, start, end, thisMatchText);
+        if(directiveType === '@codekit-prepend'){
+            returnText = prependString(returnText, start, end, thisMatchText);
+        }else if(directiveType === '@codekit-append'){
+            returnText = appendString(returnText, start, end, thisMatchText);
+        }else{
+            returnText = replaceStringByIndices(returnText, start, end, thisMatchText);
+        }
     }
 
     return returnText ? returnText : fileContents;
@@ -116,7 +129,11 @@ function globMatch(match, filePath) {
         directiveType = directiveType.replace('_directory', '');
     }
 
-    if (directiveType === 'require' || directiveType === 'include') {
+    if (directiveType === 'require' || directiveType === 'include' || directiveType.indexOf('codekit') !== -1) {
+        if (relativeFilePath.charAt(0).match(/['"]/g)) {
+            // optional [] on multiple files
+            relativeFilePath = '[' + relativeFilePath + ']';
+        }
         if (relativeFilePath.charAt(0) === '[') {
             relativeFilePath = eval(relativeFilePath);
             for (var i = 0; i < relativeFilePath.length; i++) {
@@ -176,6 +193,20 @@ function _internalGlob(thisGlob, filePath) {
 
 function replaceStringByIndices(string, start, end, replacement) {
     return string.substring(0, start) + replacement + string.substring(end);
+}
+
+function prependString(string, start, end, prepend) {
+    // cache prepend
+    prependCache = prepend + prependCache;
+    // remove directive
+    return string.substring(0, start) + string.substring(end);
+}
+
+function appendString(string, start, end, append) {
+    // cache append
+    appendCache = append + appendCache;
+    // remove directive
+    return string.substring(0, start) + string.substring(end);
 }
 
 function addLeadingWhitespace(whitespace, string) {
