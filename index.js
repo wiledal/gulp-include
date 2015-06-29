@@ -76,7 +76,7 @@ function expand(fileContents, filePath) {
             whitespace = original.match(/^\s+/);
             if (whitespace) {
                 //Discard newlines
-                whitespace = whitespace[0].replace("\n", "");
+                whitespace = whitespace[0].replace(/\n/g, "");
 
                 //Is there some whitespace left?
                 if (whitespace) {
