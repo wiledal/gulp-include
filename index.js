@@ -45,7 +45,11 @@ function processInclude(content, filePath) {
   for (var i = 0; i < matches.length; i++) {
     var leadingWhitespaceMatch = matches[i].match(/^(\s+)/);
     var leadingWhitespace = null;
-    if (leadingWhitespaceMatch) leadingWhitespace = leadingWhitespaceMatch[0].replace("\n", "");
+    if (leadingWhitespaceMatch) {
+      leadingWhitespace = leadingWhitespaceMatch[0];
+      if (leadingWhitespaceMatch[0].indexOf("\n") > -1) leadingWhitespace = leadingWhitespaceMatch[0].split("\n")[1];
+      leadingWhitespace = leadingWhitespace.replace("\n", "");
+    }
     
     // Remove beginnings, endings and trim.
     var includeCommand = matches[i]
