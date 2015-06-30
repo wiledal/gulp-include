@@ -4,97 +4,76 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 
 > Made for gulp 3
 
+## Features
+* Concatenate files with full control
+* Respects indentation whitespace
+* Uses [globs](https://www.npmjs.com/package/glob) for simple path control
+* Works recursively (files can include files that can include files, and so on)
 
+*Warning: if you are updating from 1.x.x to 2.x.x, please read this readme to get up to date on the behavior of `gulp-include`*
+
+## Installation
+```shell
+npm install gulp-include
+```
 ## Usage
-First, install `gulp-include` as a dev dependency:
-`npm install --save-dev gulp-include`
-
-Then, add your _include-comments_ to your file.  
-_People who have experience with `sprockets` or `snockets` will feel at home._
-
-
-An _include-comment_ looks like this:
+Example `gulpfile.js`:
 ```javascript
-//= include relative/path/to/file.js
-```
-or if you want to get crazy, a glob pattern like so:
-```javascript
-//= include relative/path/to/directory/*.js
-```
-
-or to get even crazier, an array glob similar to commonly used in GruntJS:
-```javascript
-//= include ['app/someFramework.js', 'app/**/*.js', '!app/vendor/**/*', 'app/someLibrary.js']
-```
-
-(Note: for those of you unfamiliar with the above syntax, check out https://github.com/isaacs/node-glob
-or http://gruntjs.com/configuring-tasks#globbing-patterns)
-
-You can do all of this in any language, the only requirement is that the first character
- on the line after any #, /, or white space characters is an equal sign.
-```coffeescript
-#= require_tree relative/path/to/directory
-```
-`gulp-include` disregards whitespace, as long as the comment-line starts with a _newline_ followed `=` and contains `include`, `require` or `include_tree`, `require_tree`.
-
-This plugin recursively expand files it includes, so you can nest includes inside of files that
-    were themselves included. IE:
-
-`main.js`:
-```
-//= include included_file.js
-```
-
-`included_file.js`:
-```
-//= include recursive_include.js
-```
-And so on recursively to an arbitrary depth.
-
-The example below compiles a several coffee-files and js-files into a single js-file:
-
-`app.coffee`:
-
-```coffeescript
-`
-//= require vendor/jquery.js
-//= require vendor/modernizr.js
-`
-
-#= require controllers/AppController.coffee
-#= require_tree views
-
-class Main extends AppController
-	constructor: ->
-		console.log "This is main!"
-
-window.main = new Main()
-```
-*Note:* The example above uses backticks (\`) to allow `gulp-coffee` to compile inline javascript
-
-`gulpfile.js`:
-
-```javascript
-var gulp		= require('gulp'),
-	include		= require('gulp-include'),
-	coffee		= require('gulp-coffee');
+var gulp          = require("gulp"),
+    include       = require("gulp-include");
 
 gulp.task("scripts", function() {
-	gulp.src('src/js/app.coffee')
-		.pipe( include() )
-		.pipe( coffee() )
-		.pipe( gulp.dest("dist/js") )
+  console.log("-- gulp is running task 'scripts'");
+
+  gulp.src("src/js/main.js")
+    .pipe(include())
+      .on('error', console.log)
+    .pipe(gulp.dest("dist/js"));
 });
 
-gulp.task("default", "scripts");
+gulp.task("default", ["scripts"]);
+
 ```
 
 ## Options
 * `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
-	* If set, all inclusions that does not match the extension(s) will be ignored
+	* If set, all directives that does not match the extension(s) will be ignored
+
+## Include directives
+`gulp-include` uses directives similar to `sprockets` or `snockets`. A _directive_ is a comment in your files that `gulp-include` recognizes as a command.
+  
+Example directives:
+```javascript
+//=require vendor/jquery.js
+//=require vendor/**/*.js
+//=include relative/path/to/file.js
+```
+```css
+/*=include relative/path/to/file.css */
+```
+```coffee
+#=include relative/path/to/file.coffee
+```
+The contents of the referenced file will replace the file.
+  
+### `require` vs. `include`
+A file that is included with `require` will only be included if it has not been included  before. Files included with `include` will _always_ be included.  
+For instance, let's say you want to include `jquery.js` only once, and before any of your other scripts in the same folder.
+```javascript
+//=require vendor/jquery.js
+//=require vendor/*.js
+```
+Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
 
 ## Release log
+#### 2.0.0
+* Core rewritten to be slimmer and more comprehensive.
+* `require` and `include` no longer work the same. `require` will only include a file that hasn't been included yet. See readme for details.
+* Tests have been rewritten based on the old ones, but also to fit the new functionality
+* Deprecated `require_tree` and `require_directory` as they serve little purpose. Use globs (`path/to/**/*.xxx`) instead.
+* Fixed spacing issues and 
+
 #### 1.1.1
 * Merged community fix by [trolev](https://github.com/trolev)
 
