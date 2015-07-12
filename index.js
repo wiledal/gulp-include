@@ -91,7 +91,7 @@ function processInclude(content, filePath) {
     
     // REPLACE
     if (replaceContent) {
-      content = content.replace(matches[i], replaceContent);
+      content = content.replace(matches[i], function(){return replaceContent});
     }
   }
   
