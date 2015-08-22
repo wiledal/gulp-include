@@ -54,7 +54,7 @@ function processInclude(content, filePath) {
     // Remove beginnings, endings and trim.
     var includeCommand = matches[i]
       .replace(/(\s+)/gi, " ")
-      .replace(/(\/\/|\/\*)(\s+)?=(\s+)?/g, "")
+      .replace(/(\/\/|\/\*|\#)(\s+)?=(\s+)?/g, "")
       .replace(/(\*\/)$/gi, "")
       .replace(/['"]/g, "")
       .trim();
