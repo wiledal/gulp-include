@@ -13,6 +13,10 @@
     //=include deep_path/deeper_path/c.js
     //=require deep_path/b.js
     //=require deep_path/deeper_path/c.js
+    #=include deep_path/b.js
+    #=include deep_path/deeper_path/c.js
+    #=require deep_path/b.js
+    #=require deep_path/deeper_path/c.js
 */
 
 // This is an inline comment
