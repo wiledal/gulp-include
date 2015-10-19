@@ -67,6 +67,9 @@ For instance, let's say you want to include `jquery.js` only once, and before an
 Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
 
 ## Release log
+#### 2.0.3
+* Merged community fix by [shadow1runner](https://github.com/shadow1runner)
+
 #### 2.0.2
 * Updated replace to support specials [Riim](https://github.com/Riim)
 
