@@ -2,7 +2,10 @@ var gutil = require("gulp-util"),
     should = require("should"),
     include = require("../index"),
     fs = require("fs"),
-    vm = require("vm");
+    vm = require("vm"),
+    assert = require('stream-assert'),
+    gulp = require('gulp'),
+    sourcemaps = require('gulp-sourcemaps');
 
 
 // TEST DESCRIPTIONS
@@ -117,5 +120,18 @@ describe("gulp-include", function () {
       done();
     });
     testInclude.write(file);
+  });
+
+  it('should support source maps', function (done) {
+    gulp.src('test/fixtures/js/basic-include.js')
+      .pipe(sourcemaps.init())
+      .pipe(include())
+      .pipe(assert.length(1))
+      .pipe(assert.first(function (d) {
+        d.sourceMap.sources.should.have.length(3);
+        d.sourceMap.file.should.eql('basic-include.js');
+        d.sourceMap.sources.should.eql(['basic-include.js', 'deep_path/b.js', 'deep_path/deeper_path/c.js'])
+      }))
+      .pipe(assert.end(done));
   });
 })
