@@ -62,7 +62,10 @@ function processInclude(content, filePath) {
     
     // Split the directive and the path
     var includeType = split[0];
-    var includePath = relativeBasePath + "/" + split[1];
+	if( split[1].substr(0,1) == '/' )
+		var includePath = path.resolve('.') + "" + split[1];
+	else
+	    var includePath = relativeBasePath + "/" + split[1];
     
     // Use glob for file searching
     var fileMatches = glob.sync(includePath, {mark: true});
