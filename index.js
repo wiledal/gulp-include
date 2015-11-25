@@ -219,7 +219,7 @@ function processInclude(content, filePath, sourceMap) {
         replaceContent = '\n' + replaceContent;
       }
 
-      content = content.replace(matches[i], replaceContent);
+      content = content.replace(matches[i], function() { return replaceContent });
       insertedLines--; // adjust because the original line with comment was removed
     }
   }
