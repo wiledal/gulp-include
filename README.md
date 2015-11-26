@@ -55,6 +55,10 @@ Example directives:
 ```coffee
 #=include relative/path/to/file.coffee
 ```
+```html
+<!--=include relative/path/to/file.html -->
+```
+
 The contents of the referenced file will replace the file.
   
 ### `require` vs. `include`
