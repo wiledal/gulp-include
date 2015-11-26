@@ -89,7 +89,6 @@ Note: This also works recursively. If for instance, for the example above, if an
 * `require` and `include` no longer work the same. `require` will only include a file that hasn't been included yet. See readme for details.
 * Tests have been rewritten based on the old ones, but also to fit the new functionality
 * Deprecated `require_tree` and `require_directory` as they serve little purpose. Use globs (`path/to/**/*.xxx`) instead.
-* Fixed spacing issues and 
 
 #### 1.1.1
 * Merged community fix by [trolev](https://github.com/trolev)
