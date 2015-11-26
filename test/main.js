@@ -118,4 +118,22 @@ describe("gulp-include", function () {
     });
     testInclude.write(file);
   });
+  
+  it("should work with html-comments", function(done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/html/basic-include.html",
+      contents: fs.readFileSync("test/fixtures/html/basic-include.html")
+    });
+
+    testInclude = include();
+    testInclude.on("data", function (newFile) {
+      should.exist(newFile);
+      should.exist(newFile.contents);
+
+      String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/html/basic-include-output.html"), "utf8"))
+      done();
+    });
+    testInclude.write(file);
+  })
 })
