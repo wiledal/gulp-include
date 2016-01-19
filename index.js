@@ -97,11 +97,12 @@ function processInclude(content, filePath, sourceMap) {
 
     // Remove beginnings, endings and trim.
     var includeCommand = matches[i]
-      .replace(/(\s+)/gi, " ")
-      .replace(/(\/\/|\/\*|\#)(\s+)?=(\s+)?/g, "")
-      .replace(/(\*\/)$/gi, "")
+      .replace(/\s+/g, " ")
+      .replace(/(\/\/|\/\*|\#|<!--)(\s+)?=(\s+)?/g, "")
+      .replace(/(\*\/|-->)$/g, "")
       .replace(/['"]/g, "")
       .trim();
+
     var split = includeCommand.split(" ");
     
     // Split the directive and the path
