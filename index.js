@@ -102,7 +102,7 @@ function processInclude(content, filePath, sourceMap) {
       .replace(/(\*\/)$/gi, "")
       .replace(/['"]/g, "")
       .trim();
-    var split = includeCommand.split(/ (.+)?/);
+    var split = includeCommand.split(/ (.+)?/); // split only first white space
     // Split the directive and the path
     var includeType = split[0];
     var includePath = relativeBasePath + "/" + split[1];
