@@ -102,11 +102,17 @@ function processInclude(content, filePath, sourceMap) {
       .replace(/(\*\/)$/gi, "")
       .replace(/['"]/g, "")
       .trim();
-    var split = includeCommand.split(" ");
-    
+    var split = includeCommand.split(/ (.+)?/);
     // Split the directive and the path
     var includeType = split[0];
     var includePath = relativeBasePath + "/" + split[1];
+    fs.stat(includePath, function(err, stat) {
+        if (err) {
+          var errString = 'File ' + includePath + ' is not exist!';
+          console.log(err + '\n' + err.path);
+          throw new Error();
+        }
+    });
 
     var currentLine;
     if (sourceMap) {
