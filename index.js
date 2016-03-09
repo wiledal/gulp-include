@@ -2,6 +2,7 @@ var fs = require('fs'),
     path = require('path'),
     es = require('event-stream'),
     gutil = require('gulp-util'),
+    PluginError = gutil.PluginError,
     glob = require('glob'),
     applySourceMap = require('vinyl-sourcemaps-apply');
 
@@ -107,6 +108,13 @@ function processInclude(content, filePath, sourceMap) {
     // Split the directive and the path
     var includeType = split[0];
     var includePath = relativeBasePath + "/" + split[1];
+
+    // Throw error if file not found
+    fs.stat(includePath, function(err, stat) {
+      if (err) {
+        throw new PluginError('gulp-include', 'File not found ' + includePath + ' for gulp-concat');
+      }
+    });
 
     var currentLine;
     if (sourceMap) {
