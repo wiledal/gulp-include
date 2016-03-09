@@ -39,6 +39,10 @@ gulp.task("default", ["scripts"]);
 * `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
 	* If set, all directives that does not match the extension(s) will be ignored
+	
+* `absolutePath` (optional)
+	* default is false, relativeBasePath + "/" + "abc.js";
+	* enable absolute path, e.g: "//=require ./Scripts/app/*.js"
 
 ## Include directives
 `gulp-include` uses directives similar to `sprockets` or `snockets`. A _directive_ is a comment in your files that `gulp-include` recognizes as a command.
