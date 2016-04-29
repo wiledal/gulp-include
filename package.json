@@ -30,6 +30,7 @@
     "glob": "^5.0.12",
     "gulp-util": "~2.2.10",
     "source-map": "^0.5.1",
+    "strip-bom": "^2.0.0",
     "vinyl-sourcemaps-apply": "^0.2.0"
   }
 }
