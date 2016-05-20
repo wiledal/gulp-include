@@ -5,7 +5,8 @@ var gutil = require("gulp-util"),
     vm = require("vm"),
     assert = require('stream-assert'),
     gulp = require('gulp'),
-    sourcemaps = require('gulp-sourcemaps');
+    sourcemaps = require('gulp-sourcemaps'),
+    path = require("path");
 
 
 // TEST DESCRIPTIONS
@@ -169,6 +170,30 @@ describe("gulp-include", function () {
       done();
     });
 
+    testInclude.write(file);
+  })
+  
+  it("should include from set includePaths", function(done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/js/include-path.js",
+      contents: fs.readFileSync("test/fixtures/js/include-path.js")
+    });
+  
+    testInclude = include({
+      includePaths: [
+        __dirname + "/fixtures/js/include-path",
+        __dirname + "/fixtures/js/include-path2",
+        __dirname + "/fixtures/js/include-path2/deeper2",
+      ]
+    });
+    testInclude.on("data", function (newFile) {
+      should.exist(newFile);
+      should.exist(newFile.contents);
+  
+      String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/js/include-path.js"), "utf8"))
+      done();
+    });
     testInclude.write(file);
   })
 })

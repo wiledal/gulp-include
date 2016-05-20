@@ -9,13 +9,26 @@ var fs = require('fs'),
 var SourceMapGenerator = require('source-map').SourceMapGenerator;
 var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
-var extensions = null,
-    includedFiles = [];
+var extensions = null, // The extension to be searched after
+    includedFiles = [], // Keeping track of what files have been included
+    includePaths = false; // The paths to be searched
 
 module.exports = function (params) {
     var params = params || {};
     includedFiles = [];
     extensions = null;
+    includePaths = false;
+    
+    // Check for includepaths in the params
+    if (params.includePaths) {
+      if (typeof params.includePaths == "string") {
+        // Arrayify the string
+        includePaths = [params.includePaths];
+      }else if (Array.isArray(params.includePaths)) {
+        // Set this array to the includepaths
+        includePaths = params.includePaths;
+      }
+    }
 
     if (params.extensions) {
       extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
@@ -61,6 +74,7 @@ function processInclude(content, filePath, sourceMap) {
 
   if (!matches) return {content: content, map: null};
 
+  // Apply sourcemaps
   var map = null, mapSelf, lastMappedLine, currentPos, insertedLines;
   if (sourceMap) {
     map = new SourceMapGenerator({file: unixStylePath(filePath)});
@@ -106,10 +120,6 @@ function processInclude(content, filePath, sourceMap) {
 
     var split = includeCommand.split(" ");
     
-    // Split the directive and the path
-    var includeType = split[0];
-    var includePath = relativeBasePath + "/" + split[1];
-
     var currentLine;
     if (sourceMap) {
       // get position of current match and get current line number
@@ -123,8 +133,28 @@ function processInclude(content, filePath, sourceMap) {
       mapSelf(currentLine);
     }
     
+    // SEARCHING STARTS HERE
+    // Split the directive and the path
+    var includeType = split[0];
+
     // Use glob for file searching
-    var fileMatches = glob.sync(includePath, {mark: true});
+    var fileMatches = [];
+    var includePath = "";
+    if (includePaths != false) {
+      // If includepaths are set, search in those folders
+      
+      for (var y = 0; y < includePaths.length; y++) {
+        var includePath = includePaths[y] + "/" + split[1];
+        
+        var globResults = glob.sync(includePath, {mark: true});
+        fileMatches = fileMatches.concat(globResults);
+      }
+    }else{
+      // Otherwise search relatively
+      var includePath = relativeBasePath + "/" + split[1];
+      fileMatches = glob.sync(includePath, {mark: true});
+    }
+    
     var replaceContent = '';
     for (var y = 0; y < fileMatches.length; y++) {
       var globbedFilePath = fileMatches[y];

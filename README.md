@@ -36,9 +36,13 @@ gulp.task("default", ["scripts"]);
 ```
 
 ## Options
-* `extensions` (optional)
+- `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
 	* If set, all directives that does not match the extension(s) will be ignored
+- `includePaths` (optional)
+  * Takes a `String` or an `Array` of paths,  
+  eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
+  * If set, `gulp-include` will use these folders as base path when searching for files.
 
 ## Include directives
 `gulp-include` uses directives similar to `sprockets` or `snockets`. A _directive_ is a comment in your files that `gulp-include` recognizes as a command.
@@ -71,6 +75,9 @@ For instance, let's say you want to include `jquery.js` only once, and before an
 Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
 
 ## Release log
+#### 2.2.0
+* Added `includePaths` option
+
 #### 2.1.1
 * Strip BOMs, by [dhedey](https://github.com/dhedey)
 * Improved HTML comment stripping, by [shdwjk](https://github.com/shdwjk)
