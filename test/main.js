@@ -152,4 +152,23 @@ describe("gulp-include", function () {
       }))
       .pipe(assert.end(done));
   });
+
+  it('should strip unicode byte order marks from included files', function (done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/html/basic-include-with-unicode-BOM.html",
+      contents: fs.readFileSync("test/fixtures/html/basic-include-with-unicode-BOM.html")
+    });
+
+    testInclude = include();
+    testInclude.on("data", function (newFile) {
+      should.exist(newFile);
+      should.exist(newFile.contents);
+
+      String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/html/basic-include-output-with-unicode-BOM.html"), "utf8"))
+      done();
+    });
+
+    testInclude.write(file);
+  })
 })

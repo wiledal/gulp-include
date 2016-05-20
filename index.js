@@ -3,7 +3,8 @@ var fs = require('fs'),
     es = require('event-stream'),
     gutil = require('gulp-util'),
     glob = require('glob'),
-    applySourceMap = require('vinyl-sourcemaps-apply');
+    applySourceMap = require('vinyl-sourcemaps-apply'),
+    stripBom = require('strip-bom');
 
 var SourceMapGenerator = require('source-map').SourceMapGenerator;
 var SourceMapConsumer = require('source-map').SourceMapConsumer;
@@ -134,7 +135,8 @@ function processInclude(content, filePath, sourceMap) {
       if (!inExtensions(globbedFilePath)) continue; 
       
       // Get file contents and apply recursive include on result
-      var fileContents = fs.readFileSync(globbedFilePath);
+      // Unicode byte order marks are stripped from the start of included files
+      var fileContents = stripBom(fs.readFileSync(globbedFilePath));
       
       var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap);
       var resultContent = result.content;
