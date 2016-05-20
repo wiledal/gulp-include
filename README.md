@@ -50,7 +50,7 @@ gulp.task("default", ["scripts"]);
 #### Example options usage:
 ```js
 gulp.src("src/js/main.js")
-  .pipe(include({
+  .pipe(include({ 
     extensions: "js",
     includePaths: [
       __dirname + "/bower_components",
