@@ -37,12 +37,28 @@ gulp.task("default", ["scripts"]);
 
 ## Options
 - `extensions` (optional)
-	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`
-	* If set, all directives that does not match the extension(s) will be ignored
+	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`  
+  
+  * If set, all directives that does not match the extension(s) will be ignored  
+  
+  
 - `includePaths` (optional)
   * Takes a `String` or an `Array` of paths,  
   eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
   * If set, `gulp-include` will use these folders as base path when searching for files.
+  
+#### Example options usage:
+```js
+gulp.src("src/js/main.js")
+  .pipe(include({
+    extensions: "js",
+    includePaths: [
+      __dirname + "/bower_components",
+      __dirname + "/src/js"
+    ]
+  }))
+  .pipe(gulp.dest("dist/js"));
+```
 
 ## Include directives
 `gulp-include` uses directives similar to `sprockets` or `snockets`. A _directive_ is a comment in your files that `gulp-include` recognizes as a command.
