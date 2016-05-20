@@ -140,20 +140,24 @@ function processInclude(content, filePath, sourceMap) {
     // Use glob for file searching
     var fileMatches = [];
     var includePath = "";
+    
     if (includePaths != false) {
       // If includepaths are set, search in those folders
-      
       for (var y = 0; y < includePaths.length; y++) {
-        var includePath = includePaths[y] + "/" + split[1];
+        includePath = includePaths[y] + "/" + split[1];
         
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = fileMatches.concat(globResults);
       }
     }else{
       // Otherwise search relatively
-      var includePath = relativeBasePath + "/" + split[1];
-      fileMatches = glob.sync(includePath, {mark: true});
+      includePath = relativeBasePath + "/" + split[1];
+      var globResults = glob.sync(includePath, {mark: true});
+      if (globResults.length < 1) fileNotFoundError(includePath);
+      fileMatches = globResults;
     }
+    
+    if (fileMatches.length < 1) fileNotFoundError(includePath);
     
     var replaceContent = '';
     for (var y = 0; y < fileMatches.length; y++) {
@@ -274,6 +278,10 @@ function addLeadingWhitespace(whitespace, string) {
   return string.split("\n").map(function(line) {
     return whitespace + line;
   }).join("\n");
+}
+
+function fileNotFoundError(includePath) {
+  throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
 }
 
 function inExtensions(filePath) {

@@ -1,0 +1,121 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'publish',
+1 verbose cli   '--force' ]
+2 info using npm@3.8.7
+3 info using node@v4.2.6
+4 warn using --force I sure hope you know what you are doing.
+5 verbose publish [ '.' ]
+6 silly cache add args [ '.', null ]
+7 verbose cache add spec .
+8 silly cache add parsed spec Result {
+8 silly cache add   raw: '.',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: '.',
+8 silly cache add   spec: '/repos/gulp-include-updates/gulp-include',
+8 silly cache add   type: 'directory' }
+9 verbose addLocalDirectory /Users/hugowiledal/.npm/gulp-include/2.2.0/package.tgz not in flight; packing
+10 verbose correctMkdir /Users/hugowiledal/.npm correctMkdir not in flight; initializing
+11 info lifecycle gulp-include@2.2.0~prepublish: gulp-include@2.2.0
+12 silly lifecycle gulp-include@2.2.0~prepublish: no script for prepublish, continuing
+13 verbose tar pack [ '/Users/hugowiledal/.npm/gulp-include/2.2.0/package.tgz',
+13 verbose tar pack   '/repos/gulp-include-updates/gulp-include' ]
+14 verbose tarball /Users/hugowiledal/.npm/gulp-include/2.2.0/package.tgz
+15 verbose folder /repos/gulp-include-updates/gulp-include
+16 verbose addLocalTarball adding from inside cache /Users/hugowiledal/.npm/gulp-include/2.2.0/package.tgz
+17 verbose correctMkdir /Users/hugowiledal/.npm correctMkdir not in flight; initializing
+18 silly cache afterAdd gulp-include@2.2.0
+19 verbose afterAdd /Users/hugowiledal/.npm/gulp-include/2.2.0/package/package.json not in flight; writing
+20 verbose correctMkdir /Users/hugowiledal/.npm correctMkdir not in flight; initializing
+21 verbose afterAdd /Users/hugowiledal/.npm/gulp-include/2.2.0/package/package.json written
+22 silly publish { name: 'gulp-include',
+22 silly publish   version: '2.2.0',
+22 silly publish   description: 'Makes inclusion of files a breeze. Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.',
+22 silly publish   homepage: 'http://github.com/wiledal/gulp-include',
+22 silly publish   repository:
+22 silly publish    { type: 'git',
+22 silly publish      url: 'git://github.com/wiledal/gulp-include.git' },
+22 silly publish   main: 'index.js',
+22 silly publish   scripts: { test: 'mocha' },
+22 silly publish   keywords: [ 'gulpplugin' ],
+22 silly publish   author: { name: 'Hugo Wiledal' },
+22 silly publish   license: 'MIT',
+22 silly publish   devDependencies:
+22 silly publish    { gulp: '~3.3.4',
+22 silly publish      mocha: '~1.17.0',
+22 silly publish      should: '~2.1.1',
+22 silly publish      'gulp-sourcemaps': '^1.1.4',
+22 silly publish      'stream-assert': '^2.0.1' },
+22 silly publish   dependencies:
+22 silly publish    { 'event-stream': '~3.1.0',
+22 silly publish      glob: '^5.0.12',
+22 silly publish      'gulp-util': '~2.2.10',
+22 silly publish      'source-map': '^0.5.1',
+22 silly publish      'strip-bom': '^2.0.0',
+22 silly publish      'vinyl-sourcemaps-apply': '^0.2.0' },
+22 silly publish   readme: '#gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]\n>Makes inclusion of files a breeze.  \nEnables functionality similar to that of snockets / sprockets or other file insertion compilation tools.\n\n> Made for gulp 3\n\n## Features\n* Concatenate files with full control\n* Respects indentation whitespace\n* Uses [globs](https://www.npmjs.com/package/glob) for simple path control\n* Works recursively (files can include files that can include files, and so on)\n\n*Warning: if you are updating from 1.x.x to 2.x.x, please read this readme to get up to date on the behavior of `gulp-include`*\n\n## Installation\n```shell\nnpm install gulp-include\n```\n## Usage\nExample `gulpfile.js`:\n```javascript\nvar gulp          = require("gulp"),\n    include       = require("gulp-include");\n\ngulp.task("scripts", function() {\n  console.log("-- gulp is running task \'scripts\'");\n\n  gulp.src("src/js/main.js")\n    .pipe(include())\n      .on(\'error\', console.log)\n    .pipe(gulp.dest("dist/js"));\n});\n\ngulp.task("default", ["scripts"]);\n\n```\n\n## Options\n- `extensions` (optional)\n\t* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`  \n  \n  * If set, all directives that does not match the extension(s) will be ignored  \n  \n  \n- `includePaths` (optional)\n  * Takes a `String` or an `Array` of paths,  \n  eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`\n  * If set, `gulp-include` will use these folders as base path when searching for files.\n  \n#### Example options usage:\n```js\ngulp.src("src/js/main.js")\n  .pipe(include({ \n    extensions: "js",\n    includePaths: [\n      __dirname + "/bower_components",\n      __dirname + "/src/js"\n    ]\n  }))\n  .pipe(gulp.dest("dist/js"));\n```\n\n## Include directives\n`gulp-include` uses directives similar to `sprockets` or `snockets`. A _directive_ is a comment in your files that `gulp-include` recognizes as a command.\n  \nExample directives:\n```javascript\n//=require vendor/jquery.js\n//=require vendor/**/*.js\n//=include relative/path/to/file.js\n```\n```css\n/*=include relative/path/to/file.css */\n```\n```coffee\n#=include relative/path/to/file.coffee\n```\n```html\n<!--=include relative/path/to/file.html -->\n```\n\nThe contents of the referenced file will replace the file.\n  \n### `require` vs. `include`\nA file that is included with `require` will only be included if it has not been included  before. Files included with `include` will _always_ be included.  \nFor instance, let\'s say you want to include `jquery.js` only once, and before any of your other scripts in the same folder.\n```javascript\n//=require vendor/jquery.js\n//=require vendor/*.js\n```\nNote: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.\n\n## Release log\n#### 2.2.0\n* Added `includePaths` option\n\n#### 2.1.1\n* Strip BOMs, by [dhedey](https://github.com/dhedey)\n* Improved HTML comment stripping, by [shdwjk](https://github.com/shdwjk)\n\n#### 2.1.0\n* Merged sourcemap support by [vetruvet](https://github.com/vetruvet)\n* Merged support for html-comments by [jelmerdemaat](https://github.com/jelmerdemaat)\n\n#### 2.0.3\n* Merged community fix by [shadow1runner](https://github.com/shadow1runner)\n\n#### 2.0.2\n* Updated replace to support specials [Riim](https://github.com/Riim)\n\n#### 2.0.1\n* Fixed an issue with indenting\n\n#### 2.0.0\n* Core rewritten to be slimmer and more comprehensive.\n* `require` and `include` no longer work the same. `require` will only include a file that hasn\'t been included yet. See readme for details.\n* Tests have been rewritten based on the old ones, but also to fit the new functionality\n* Deprecated `require_tree` and `require_directory` as they serve little purpose. Use globs (`path/to/**/*.xxx`) instead.\n\n#### 1.1.1\n* Merged community fix by [trolev](https://github.com/trolev)\n\n#### 1.1.0\n* Merged feature: Keep leading whitespaces by [maxgalbu](https://github.com/maxgalbu)\n\n#### 1.0.1\n* Fixed issue which caused extensions to be "remembered" if `gulp-include` ran multiple times in a row, resulting in lost includes\n\n#### 1.0.0\n* Merged major refactoring by [scottmas](https://github.com/scottmas) - Many thanks!\n\t* Rewritten core (regex, replacing and file mashing)\n\t* Glob support\n\t* Recursive support\n\t* Respecting indentation of included files\n\n* Upping version to 1.0.0 - seems fitting after such a large refactor\n\n#### 0.2.3\n* Merged community fixes by [platdesign](https://github.com/platdesign) and [cujojp](https://github.com/cujojp)\n\n#### 0.2.2\n* Updated regex directive to not collide with other requireing plugins, like browserify ([cwacek](https://github.com/cwacek))\n\n#### 0.2.1\n* Changed replace-method to fix issue when requiring a file that contained special characters ([juanghurtado](https://github.com/juanghurtado))\n\n#### 0.2.0\n* Added `require_tree`/`include_tree` (Thanks to [juanghurtado](https://github.com/juanghurtado)!)\n* Method now takes an `extensions` param for controlling what types of files to include\n\n#### 0.1.0\n* Basic include\n\n## Licence\n(MIT License)\n\nCopyright (c) 2014 Hugo Wiledal\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n\n\n[travis-image]: https://api.travis-ci.org/wiledal/gulp-include.png?branch=master\n\n[npm-url]: https://npmjs.org/package/gulp-include\n[npm-image]: https://badge.fury.io/js/gulp-include.png\n',
+22 silly publish   readmeFilename: 'README.md',
+22 silly publish   gitHead: '7799c55982f6a75e945cb3e74f39733f360c2ec3',
+22 silly publish   bugs: { url: 'https://github.com/wiledal/gulp-include/issues' },
+22 silly publish   _id: 'gulp-include@2.2.0',
+22 silly publish   _shasum: '0da05b35680cdd6d439cf9b68b71a2f9cf1ee18f',
+22 silly publish   _from: '.' }
+23 verbose getPublishConfig undefined
+24 silly mapToRegistry name gulp-include
+25 silly mapToRegistry using default registry
+26 silly mapToRegistry registry https://registry.npmjs.org/
+27 silly mapToRegistry data Result {
+27 silly mapToRegistry   raw: 'gulp-include',
+27 silly mapToRegistry   scope: null,
+27 silly mapToRegistry   name: 'gulp-include',
+27 silly mapToRegistry   rawSpec: '',
+27 silly mapToRegistry   spec: 'latest',
+27 silly mapToRegistry   type: 'tag' }
+28 silly mapToRegistry uri https://registry.npmjs.org/gulp-include
+29 verbose publish registryBase https://registry.npmjs.org/
+30 silly publish uploading /Users/hugowiledal/.npm/gulp-include/2.2.0/package.tgz
+31 verbose request uri https://registry.npmjs.org/gulp-include
+32 verbose request sending authorization for write operation
+33 info attempt registry request try #1 at 3:47:42 PM
+34 verbose request id 6ae974c8fa93022a
+35 http request PUT https://registry.npmjs.org/gulp-include
+36 http 403 https://registry.npmjs.org/gulp-include
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '95',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Fri, 20 May 2016 13:47:43 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-ams4144-AMS',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1463752062.160921,VS0,VE1407',
+37 verbose headers   vary: 'Accept-Encoding' }
+38 verbose request invalidating /Users/hugowiledal/.npm/registry.npmjs.org/gulp-include on PUT
+39 error publish Failed PUT 403
+40 verbose stack Error: "You cannot publish over the previously published version 2.2.0." : gulp-include
+40 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+40 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+40 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:200:22)
+40 verbose stack     at emitTwo (events.js:87:13)
+40 verbose stack     at Request.emit (events.js:172:7)
+40 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1041:10)
+40 verbose stack     at emitOne (events.js:82:20)
+40 verbose stack     at Request.emit (events.js:169:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:968:12)
+41 verbose statusCode 403
+42 verbose pkgid gulp-include
+43 verbose cwd /repos/gulp-include-updates/gulp-include
+44 error Darwin 14.5.0
+45 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "publish" "--force"
+46 error node v4.2.6
+47 error npm  v3.8.7
+48 error code E403
+49 error "You cannot publish over the previously published version 2.2.0." : gulp-include
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]

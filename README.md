@@ -38,9 +38,7 @@ gulp.task("default", ["scripts"]);
 ## Options
 - `extensions` (optional)
 	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`  
-  
   * If set, all directives that does not match the extension(s) will be ignored  
-  
   
 - `includePaths` (optional)
   * Takes a `String` or an `Array` of paths,  
@@ -91,6 +89,9 @@ For instance, let's say you want to include `jquery.js` only once, and before an
 Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
 
 ## Release log
+#### 2.2.1
+* Now throws an error if glob match is unmet
+
 #### 2.2.0
 * Added `includePaths` option
 
