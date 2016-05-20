@@ -71,6 +71,10 @@ For instance, let's say you want to include `jquery.js` only once, and before an
 Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
 
 ## Release log
+#### 2.1.1
+* Strip BOMs, by [dhedey](https://github.com/dhedey)
+* Improved HTML comment stripping, by [shdwjk](https://github.com/shdwjk)
+
 #### 2.1.0
 * Merged sourcemap support by [vetruvet](https://github.com/vetruvet)
 * Merged support for html-comments by [jelmerdemaat](https://github.com/jelmerdemaat)
