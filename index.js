@@ -17,7 +17,8 @@ module.exports = function (params) {
     var params = params || {};
     includedFiles = [];
     extensions = null;
-    includePaths = false;
+    includePaths = false,
+    includeFileExistsIgnore = false;
     
     // Check for includepaths in the params
     if (params.includePaths) {
@@ -32,6 +33,10 @@ module.exports = function (params) {
 
     if (params.extensions) {
       extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
+    }
+    
+    if (params.includeFileExistsIgnore && typeof params.includeFileExistsIgnore === 'boolean') {
+      includeFileExistsIgnore = params.includeFileExistsIgnore;
     }
 
     function include(file, callback) {
@@ -153,11 +158,11 @@ function processInclude(content, filePath, sourceMap) {
       // Otherwise search relatively
       includePath = relativeBasePath + "/" + split[1];
       var globResults = glob.sync(includePath, {mark: true});
-      if (globResults.length < 1) fileNotFoundError(includePath);
+      if (globResults.length < 1) fileNotFoundError(includePath, includeType);
       fileMatches = globResults;
     }
     
-    if (fileMatches.length < 1) fileNotFoundError(includePath);
+    if (fileMatches.length < 1) fileNotFoundError(includePath, includeType);
     
     var replaceContent = '';
     for (var y = 0; y < fileMatches.length; y++) {
@@ -280,8 +285,12 @@ function addLeadingWhitespace(whitespace, string) {
   }).join("\n");
 }
 
-function fileNotFoundError(includePath) {
-  throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
+function fileNotFoundError(includePath, includeType) {
+  if (includeFileExistsIgnore && includeType != 'require') { 
+    gutil.log('Exception:', gutil.colors.cyan('"gulp-include"'), gutil.colors.red('No files found matching ' + includePath));
+  }else{
+    throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
+  }
 }
 
 function inExtensions(filePath) {
