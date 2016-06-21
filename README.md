@@ -37,19 +37,29 @@ gulp.task("default", ["scripts"]);
 
 ## Options
 - `extensions` (optional)
-	* Takes a `String` or an `Array` of extensions, eg: `"js"` or `["js", "coffee"]`  
+  * Takes a `String` or an `Array` of extensions.  
+  eg: `"js"` or `["js", "coffee"]`
   * If set, all directives that does not match the extension(s) will be ignored  
-  
+
+
 - `includePaths` (optional)
-  * Takes a `String` or an `Array` of paths,  
+  * Takes a `String` or an `Array` of paths.  
   eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
   * If set, `gulp-include` will use these folders as base path when searching for files.
-  
+
+
+- `hardFail` (optional)
+  * Boolean, `false` by default
+  * Set this to `true` if you want `gulp-include` to throw errors if a file does not match
+  an include directive.
+  * If set to `false` gulp include will not fail, but display warnings in the console.
+
 #### Example options usage:
 ```js
 gulp.src("src/js/main.js")
-  .pipe(include({ 
+  .pipe(include({
     extensions: "js",
+    hardFail: true,
     includePaths: [
       __dirname + "/bower_components",
       __dirname + "/src/js"
@@ -60,7 +70,7 @@ gulp.src("src/js/main.js")
 
 ## Include directives
 `gulp-include` uses directives similar to `sprockets` or `snockets`. A _directive_ is a comment in your files that `gulp-include` recognizes as a command.
-  
+
 Example directives:
 ```javascript
 //=require vendor/jquery.js
@@ -78,7 +88,7 @@ Example directives:
 ```
 
 The contents of the referenced file will replace the file.
-  
+
 ### `require` vs. `include`
 A file that is included with `require` will only be included if it has not been included  before. Files included with `include` will _always_ be included.  
 For instance, let's say you want to include `jquery.js` only once, and before any of your other scripts in the same folder.
@@ -88,69 +98,8 @@ For instance, let's say you want to include `jquery.js` only once, and before an
 ```
 Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
 
-## Release log
-#### 2.2.1
-* Now throws an error if glob match is unmet
-
-#### 2.2.0
-* Added `includePaths` option
-
-#### 2.1.1
-* Strip BOMs, by [dhedey](https://github.com/dhedey)
-* Improved HTML comment stripping, by [shdwjk](https://github.com/shdwjk)
-
-#### 2.1.0
-* Merged sourcemap support by [vetruvet](https://github.com/vetruvet)
-* Merged support for html-comments by [jelmerdemaat](https://github.com/jelmerdemaat)
-
-#### 2.0.3
-* Merged community fix by [shadow1runner](https://github.com/shadow1runner)
-
-#### 2.0.2
-* Updated replace to support specials [Riim](https://github.com/Riim)
-
-#### 2.0.1
-* Fixed an issue with indenting
-
-#### 2.0.0
-* Core rewritten to be slimmer and more comprehensive.
-* `require` and `include` no longer work the same. `require` will only include a file that hasn't been included yet. See readme for details.
-* Tests have been rewritten based on the old ones, but also to fit the new functionality
-* Deprecated `require_tree` and `require_directory` as they serve little purpose. Use globs (`path/to/**/*.xxx`) instead.
-
-#### 1.1.1
-* Merged community fix by [trolev](https://github.com/trolev)
-
-#### 1.1.0
-* Merged feature: Keep leading whitespaces by [maxgalbu](https://github.com/maxgalbu)
-
-#### 1.0.1
-* Fixed issue which caused extensions to be "remembered" if `gulp-include` ran multiple times in a row, resulting in lost includes
-
-#### 1.0.0
-* Merged major refactoring by [scottmas](https://github.com/scottmas) - Many thanks!
-	* Rewritten core (regex, replacing and file mashing)
-	* Glob support
-	* Recursive support
-	* Respecting indentation of included files
-
-* Upping version to 1.0.0 - seems fitting after such a large refactor
-
-#### 0.2.3
-* Merged community fixes by [platdesign](https://github.com/platdesign) and [cujojp](https://github.com/cujojp)
-
-#### 0.2.2
-* Updated regex directive to not collide with other requireing plugins, like browserify ([cwacek](https://github.com/cwacek))
-
-#### 0.2.1
-* Changed replace-method to fix issue when requiring a file that contained special characters ([juanghurtado](https://github.com/juanghurtado))
-
-#### 0.2.0
-* Added `require_tree`/`include_tree` (Thanks to [juanghurtado](https://github.com/juanghurtado)!)
-* Method now takes an `extensions` param for controlling what types of files to include
-
-#### 0.1.0
-* Basic include
+## Changelog
+For release notes see `CHANGELOG.md`.
 
 ## Licence
 (MIT License)

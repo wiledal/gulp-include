@@ -29,7 +29,7 @@ describe("gulp-include", function () {
       });
       testInclude.write(file);
     });
-    
+
     it("should keep whitespace when including", function (done) {
       var file = new gutil.File({
         base: "test/fixtures/",
@@ -47,7 +47,7 @@ describe("gulp-include", function () {
       });
       testInclude.write(file);
     });
-    
+
     it("should include complex folder trees", function (done) {
       var file = new gutil.File({
         base: "test/fixtures/",
@@ -66,7 +66,7 @@ describe("gulp-include", function () {
       testInclude.write(file);
     });
   })
-  
+
   it("should not REQUIRE a file twice", function (done) {
     var file = new gutil.File({
       base: "test/fixtures/",
@@ -84,7 +84,7 @@ describe("gulp-include", function () {
     });
     testInclude.write(file);
   });
-  
+
   it("should pull files recursively", function (done) {
     var file = new gutil.File({
       base: "test/fixtures/",
@@ -102,7 +102,7 @@ describe("gulp-include", function () {
     });
     testInclude.write(file);
   });
-  
+
   it("should only include files with the set extensions, if provided", function (done) {
     var file = new gutil.File({
       base: "test/fixtures/",
@@ -122,7 +122,7 @@ describe("gulp-include", function () {
     });
     testInclude.write(file);
   });
-  
+
   it("should work with html-comments", function(done) {
     var file = new gutil.File({
       base: "test/fixtures/",
@@ -172,14 +172,14 @@ describe("gulp-include", function () {
 
     testInclude.write(file);
   })
-  
+
   it("should include from set includePaths", function(done) {
     var file = new gutil.File({
       base: "test/fixtures/",
       path: "test/fixtures/js/include-path.js",
       contents: fs.readFileSync("test/fixtures/js/include-path.js")
     });
-  
+
     testInclude = include({
       includePaths: [
         __dirname + "/fixtures/js/include-path",
@@ -190,8 +190,43 @@ describe("gulp-include", function () {
     testInclude.on("data", function (newFile) {
       should.exist(newFile);
       should.exist(newFile.contents);
-  
+
       String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/js/include-path.js"), "utf8"))
+      done();
+    });
+    testInclude.write(file);
+  })
+
+  it("should throw an error if no match is found with hardFail: true", function(done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/js/include-fail.js",
+      contents: fs.readFileSync("test/fixtures/js/include-fail.js")
+    });
+
+    testInclude = include({
+      hardFail: true
+    });
+    testInclude.on("error", function(err) {
+      if (err) done();
+    });
+    testInclude.write(file);
+  })
+
+  it("should not throw an error if no match is found with hardFail: false", function(done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/js/include-fail.js",
+      contents: fs.readFileSync("test/fixtures/js/include-fail.js")
+    });
+
+    testInclude = include({
+      hardFail: false
+    });
+    testInclude.on("error", function(err) {
+      done(err);
+    });
+    testInclude.on("data", function(newFile) {
       done();
     });
     testInclude.write(file);

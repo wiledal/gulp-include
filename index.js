@@ -11,14 +11,16 @@ var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
 var extensions = null, // The extension to be searched after
     includedFiles = [], // Keeping track of what files have been included
-    includePaths = false; // The paths to be searched
+    includePaths = false, // The paths to be searched
+    hardFail = false; // Throw error when no match
 
 module.exports = function (params) {
     var params = params || {};
     includedFiles = [];
     extensions = null;
     includePaths = false;
-    
+    hardFail = false;
+
     // Check for includepaths in the params
     if (params.includePaths) {
       if (typeof params.includePaths == "string") {
@@ -28,6 +30,11 @@ module.exports = function (params) {
         // Set this array to the includepaths
         includePaths = params.includePaths;
       }
+    }
+
+    // Toggle error reporting
+    if (params.hardFail != undefined) {
+      hardFail = params.hardFail;
     }
 
     if (params.extensions) {
@@ -119,7 +126,7 @@ function processInclude(content, filePath, sourceMap) {
       .trim();
 
     var split = includeCommand.split(" ");
-    
+
     var currentLine;
     if (sourceMap) {
       // get position of current match and get current line number
@@ -132,7 +139,7 @@ function processInclude(content, filePath, sourceMap) {
 
       mapSelf(currentLine);
     }
-    
+
     // SEARCHING STARTS HERE
     // Split the directive and the path
     var includeType = split[0];
@@ -140,12 +147,12 @@ function processInclude(content, filePath, sourceMap) {
     // Use glob for file searching
     var fileMatches = [];
     var includePath = "";
-    
+
     if (includePaths != false) {
       // If includepaths are set, search in those folders
       for (var y = 0; y < includePaths.length; y++) {
         includePath = includePaths[y] + "/" + split[1];
-        
+
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = fileMatches.concat(globResults);
       }
@@ -153,26 +160,25 @@ function processInclude(content, filePath, sourceMap) {
       // Otherwise search relatively
       includePath = relativeBasePath + "/" + split[1];
       var globResults = glob.sync(includePath, {mark: true});
-      if (globResults.length < 1) fileNotFoundError(includePath);
       fileMatches = globResults;
     }
-    
+
     if (fileMatches.length < 1) fileNotFoundError(includePath);
-    
+
     var replaceContent = '';
     for (var y = 0; y < fileMatches.length; y++) {
       var globbedFilePath = fileMatches[y];
-      
+
       // If directive is of type "require" and file already included, skip to next.
       if (includeType == "require" && includedFiles.indexOf(globbedFilePath) > -1) continue;
-      
+
       // If not in extensions, skip this file
-      if (!inExtensions(globbedFilePath)) continue; 
-      
+      if (!inExtensions(globbedFilePath)) continue;
+
       // Get file contents and apply recursive include on result
       // Unicode byte order marks are stripped from the start of included files
       var fileContents = stripBom(fs.readFileSync(globbedFilePath));
-      
+
       var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap);
       var resultContent = result.content;
 
@@ -234,7 +240,7 @@ function processInclude(content, filePath, sourceMap) {
         currentLine += lines;
         lastMappedLine = currentLine;
       }
-      
+
       if (includedFiles.indexOf(globbedFilePath) == -1) includedFiles.push(globbedFilePath);
 
       // If the last file did not have a line break, and it is not the last file in the matched glob,
@@ -266,7 +272,7 @@ function processInclude(content, filePath, sourceMap) {
 
     mapSelf(currentLine);
   }
-  
+
   return {content: content, map: map ? map.toString() : null};
 }
 
@@ -281,7 +287,15 @@ function addLeadingWhitespace(whitespace, string) {
 }
 
 function fileNotFoundError(includePath) {
-  throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
+  if (hardFail) {
+    throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
+  }else{
+    console.warn(
+      gutil.colors.yellow('WARN: ') +
+      gutil.colors.cyan('gulp-include') +
+      ' - no files found matching ' + includePath
+    );
+  }
 }
 
 function inExtensions(filePath) {
