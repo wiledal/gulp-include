@@ -1,5 +1,8 @@
 # Changelog
 
+#### 2.3.1
+* Isolated include to solve some scoping issues that happens when running multiple includes in parallel.
+
 #### 2.3.0
 * The automatic throwing of errors caused discomfort for some, now simply warns by default, but added the possibility to turn on if necessary
 * Added `hardFail` param
