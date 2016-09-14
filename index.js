@@ -27,7 +27,10 @@ module.exports = function (params) {
       includePaths = params.includePaths;
     }
   }
-
+  
+  // copy array to closure to prevent replacing values in multithreading applications
+  var includePathsInClosure = includePaths.slice();
+  
   // Toggle error reporting
   if (params.hardFail != undefined) {
     hardFail = params.hardFail;
@@ -47,7 +50,7 @@ module.exports = function (params) {
     }
 
     if (file.isBuffer()) {
-      var result = processInclude(String(file.contents), file.path, file.sourceMap);
+      var result = processInclude(String(file.contents), file.path, file.sourceMap, includePathsInClosure);
       file.contents = new Buffer(result.content);
 
       if (file.sourceMap && result.map) {
@@ -68,7 +71,7 @@ module.exports = function (params) {
     callback(null, file);
   }
 
-  function processInclude(content, filePath, sourceMap) {
+  function processInclude(content, filePath, sourceMap, includePaths) {
     var matches = content.match(/^(\s+)?(\/\/|\/\*|\#|\<\!\-\-)(\s+)?=(\s+)?(include|require)(.+$)/mg);
     var relativeBasePath = path.dirname(filePath);
 
