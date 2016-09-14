@@ -29,7 +29,7 @@ module.exports = function (params) {
   }
   
   // copy array to closure to prevent replacing values in multithreading applications
-  var includePathsInClosure = includePaths.slice();
+  var includePathsInClosure = includePaths ? includePaths.slice() : [];
   
   // Toggle error reporting
   if (params.hardFail != undefined) {
