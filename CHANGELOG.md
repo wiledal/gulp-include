@@ -1,5 +1,8 @@
 # Changelog
 
+#### 2.3.2
+* Added `debugIncludes` param
+
 #### 2.3.1
 * Isolated include to solve some scoping issues that happens when running multiple includes in parallel.
 

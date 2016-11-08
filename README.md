@@ -1,5 +1,5 @@
 #gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
->Makes inclusion of files a breeze.  
+>Makes inclusion of files a breeze.
 Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.
 
 > Made for gulp 3
@@ -37,13 +37,13 @@ gulp.task("default", ["scripts"]);
 
 ## Options
 - `extensions` (optional)
-  * Takes a `String` or an `Array` of extensions.  
+  * Takes a `String` or an `Array` of extensions.
   eg: `"js"` or `["js", "coffee"]`
-  * If set, all directives that does not match the extension(s) will be ignored  
+  * If set, all directives that does not match the extension(s) will be ignored
 
 
 - `includePaths` (optional)
-  * Takes a `String` or an `Array` of paths.  
+  * Takes a `String` or an `Array` of paths.
   eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
   * If set, `gulp-include` will use these folders as base path when searching for files.
 
@@ -54,6 +54,11 @@ gulp.task("default", ["scripts"]);
   an include directive.
   * If set to `false` gulp include will not fail, but display warnings in the console.
 
+
+- `debugIncludes` (optional)
+  * Boolean, `false` by default
+  * Set this to `true` if you want `gulp-include` to output included filenames to the console.
+
 #### Example options usage:
 ```js
 gulp.src("src/js/main.js")
@@ -63,7 +68,8 @@ gulp.src("src/js/main.js")
     includePaths: [
       __dirname + "/bower_components",
       __dirname + "/src/js"
-    ]
+    ],
+    debugIncludes: true
   }))
   .pipe(gulp.dest("dist/js"));
 ```
@@ -90,7 +96,7 @@ Example directives:
 The contents of the referenced file will replace the file.
 
 ### `require` vs. `include`
-A file that is included with `require` will only be included if it has not been included  before. Files included with `include` will _always_ be included.  
+A file that is included with `require` will only be included if it has not been included  before. Files included with `include` will _always_ be included.
 For instance, let's say you want to include `jquery.js` only once, and before any of your other scripts in the same folder.
 ```javascript
 //=require vendor/jquery.js

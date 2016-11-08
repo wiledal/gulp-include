@@ -15,7 +15,8 @@ module.exports = function (params) {
   var extensions = null, // The extension to be searched after
       includedFiles = [], // Keeping track of what files have been included
       includePaths = false, // The paths to be searched
-      hardFail = false; // Throw error when no match
+      hardFail = false, // Throw error when no match
+      debugIncludes = false;
 
   // Check for includepaths in the params
   if (params.includePaths) {
@@ -31,6 +32,11 @@ module.exports = function (params) {
   // Toggle error reporting
   if (params.hardFail != undefined) {
     hardFail = params.hardFail;
+  }
+
+  // Toggle echoing of included filenames
+  if (params.debugIncludes != undefined) {
+    debugIncludes = params.debugIncludes;
   }
 
   if (params.extensions) {
@@ -136,6 +142,11 @@ module.exports = function (params) {
       // SEARCHING STARTS HERE
       // Split the directive and the path
       var includeType = split[0];
+
+      // Echo filenames of includes if debugIncludes is true
+      if (debugIncludes) {
+      	console.log(gutil.colors.cyan('Including: ') + gutil.colors.blue.bold(split[1]));
+      }
 
       // Use glob for file searching
       var fileMatches = [];
