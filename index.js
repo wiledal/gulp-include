@@ -150,8 +150,12 @@ module.exports = function (params) {
           fileMatches = fileMatches.concat(globResults);
         }
       }else{
-        // Otherwise search relatively
-        includePath = relativeBasePath + "/" + split[1];
+        // Otherwise search relatively          
+        if( split[1].substr(0,2) == './' )
+            includePath = path.resolve('.') + "" + split[1].substr(1);
+        else
+            includePath = relativeBasePath + "/" + split[1];
+
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = globResults;
       }
