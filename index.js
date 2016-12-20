@@ -138,22 +138,18 @@ module.exports = function (params) {
       var includeType = split[0];
 
       // Use glob for file searching
-      var fileMatches = [];
-      var includePath = "";
+      var includePath =  relativeBasePath + "/" + split[1];
+      var globResults = glob.sync(includePath, {mark: true});
+      var fileMatches = globResults;
 
-      if (includePaths != false) {
+      if (!fileMatches.length && includePaths != false) {
         // If includepaths are set, search in those folders
         for (var y = 0; y < includePaths.length; y++) {
           includePath = includePaths[y] + "/" + split[1];
 
-          var globResults = glob.sync(includePath, {mark: true});
+          globResults = glob.sync(includePath, {mark: true});
           fileMatches = fileMatches.concat(globResults);
         }
-      }else{
-        // Otherwise search relatively
-        includePath = relativeBasePath + "/" + split[1];
-        var globResults = glob.sync(includePath, {mark: true});
-        fileMatches = globResults;
       }
 
       if (fileMatches.length < 1) fileNotFoundError(includePath);
