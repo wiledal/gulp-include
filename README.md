@@ -46,6 +46,7 @@ gulp.task("default", ["scripts"]);
   * Takes a `String` or an `Array` of paths.  
   eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
   * If set, `gulp-include` will use these folders as base path when searching for files.
+  * If set, you can still include files relative to the current file by pre-pending includes with `./`.
 
 
 - `hardFail` (optional)
@@ -76,6 +77,7 @@ Example directives:
 //=require vendor/jquery.js
 //=require vendor/**/*.js
 //=include relative/path/to/file.js
+//=include ./relative/path/to/file-even-when-includePaths-set.js
 ```
 ```css
 /*=include relative/path/to/file.css */

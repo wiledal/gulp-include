@@ -197,6 +197,51 @@ describe("gulp-include", function () {
     testInclude.write(file);
   })
 
+  it("should include from explicit relative path when includePaths set", function(done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/js/include-path-relative.js",
+      contents: fs.readFileSync("test/fixtures/js/include-path-relative.js")
+    });
+
+    testInclude = include({
+      includePaths: [
+        __dirname + "/fixtures/js/include-path",
+      ]
+    });
+    testInclude.on("data", function (newFile) {
+      should.exist(newFile);
+      should.exist(newFile.contents);
+
+      String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/js/include-path-relative.js"), "utf8"))
+      done();
+    });
+    testInclude.write(file);
+  })
+
+  it("should include relative paths recursively when includePaths does not include recursively-included paths", function(done) {
+    var file = new gutil.File({
+      base: "test/fixtures/",
+      path: "test/fixtures/js/recursive-relative.js",
+      contents: fs.readFileSync("test/fixtures/js/recursive-relative.js")
+    });
+
+    testInclude = include({
+      includePaths: [
+        __dirname + "/fixtures/js/include-path",
+        __dirname + "/fixtures/js/recursive",
+      ]
+    });
+    testInclude.on("data", function (newFile) {
+      should.exist(newFile);
+      should.exist(newFile.contents);
+
+      String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/js/recursive-relative.js"), "utf8"))
+      done();
+    });
+    testInclude.write(file);
+  })
+
   it("should throw an error if no match is found with hardFail: true", function(done) {
     var file = new gutil.File({
       base: "test/fixtures/",

@@ -141,7 +141,7 @@ module.exports = function (params) {
       var fileMatches = [];
       var includePath = "";
 
-      if (includePaths != false) {
+      if (includePaths != false && !isExplicitRelativePath(split[1])) {
         // If includepaths are set, search in those folders
         for (var y = 0; y < includePaths.length; y++) {
           includePath = includePaths[y] + "/" + split[1];
@@ -151,7 +151,7 @@ module.exports = function (params) {
         }
       }else{
         // Otherwise search relatively
-        includePath = relativeBasePath + "/" + split[1];
+        includePath = relativeBasePath + "/" + removeRelativePathPrefix(split[1]);
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = globResults;
       }
@@ -271,6 +271,14 @@ module.exports = function (params) {
 
   function unixStylePath(filePath) {
     return filePath.replace(/\\/g, '/');
+  }
+
+  function isExplicitRelativePath(filePath) {
+    return filePath.indexOf('./') === 0;
+  }
+
+  function removeRelativePathPrefix(filePath) {
+    return filePath.replace(/^\.\//, '');
   }
 
   function addLeadingWhitespace(whitespace, string) {
