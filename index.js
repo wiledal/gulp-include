@@ -15,7 +15,8 @@ module.exports = function (params) {
   var extensions = null, // The extension to be searched after
       includedFiles = [], // Keeping track of what files have been included
       includePaths = false, // The paths to be searched
-      hardFail = false; // Throw error when no match
+      hardFail = false, // Throw error when no match
+      autoExtensions = false; // additional extensions added to the filename for search
 
   // Check for includepaths in the params
   if (params.includePaths) {
@@ -35,6 +36,11 @@ module.exports = function (params) {
 
   if (params.extensions) {
     extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
+  }
+
+  if (params.autoExtensions) {
+    autoExtensions = typeof params.autoExtensions === 'string' ? [params.autoExtensions] : params.autoExtensions;
+    autoExtensions = autoExtensions.map(function (ext) { return '.' + ext })
   }
 
   function include(file, callback) {
@@ -136,22 +142,28 @@ module.exports = function (params) {
       // SEARCHING STARTS HERE
       // Split the directive and the path
       var includeType = split[0];
+      var fileName = split[1];
 
       // Use glob for file searching
       var fileMatches = [];
       var includePath = "";
 
+      // add the extensions from autoExtensions if any
+      if (autoExtensions != false) {
+        fileName = fileName + '{,' + autoExtensions.join(',') + '}';
+      }
+
       if (includePaths != false) {
         // If includepaths are set, search in those folders
         for (var y = 0; y < includePaths.length; y++) {
-          includePath = includePaths[y] + "/" + split[1];
+          includePath = includePaths[y] + "/" + fileName;
 
           var globResults = glob.sync(includePath, {mark: true});
           fileMatches = fileMatches.concat(globResults);
         }
       }else{
         // Otherwise search relatively
-        includePath = relativeBasePath + "/" + split[1];
+        includePath = relativeBasePath + "/" + fileName;
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = globResults;
       }

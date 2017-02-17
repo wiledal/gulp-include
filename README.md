@@ -41,6 +41,11 @@ gulp.task("default", ["scripts"]);
   eg: `"js"` or `["js", "coffee"]`
   * If set, all directives that does not match the extension(s) will be ignored  
 
+- `autoExtensions` (optional)
+  * Takes a `String` or an `Array` of extensions.  
+  eg: `"js"` or `["js", "coffee"]`
+  * If set, the extensions will be added to the search pattern when looking for files  
+  eg: `//= require ./somescript` will resolve to `./somescript{,.js,.coffee}`
 
 - `includePaths` (optional)
   * Takes a `String` or an `Array` of paths.  
