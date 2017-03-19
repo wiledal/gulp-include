@@ -47,6 +47,7 @@ module.exports = function (params) {
     }
 
     if (file.isBuffer()) {
+      if (!inExtensions(file.path)) return callback(null, file);
       var result = processInclude(String(file.contents), file.path, file.sourceMap);
       file.contents = new Buffer(result.content);
 
