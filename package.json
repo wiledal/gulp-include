@@ -20,15 +20,17 @@
   "license": "MIT",
   "devDependencies": {
     "gulp": "~3.3.4",
+    "gulp-sourcemaps": "^1.1.4",
     "mocha": "~1.17.0",
     "should": "~2.1.1",
-    "gulp-sourcemaps": "^1.1.4",
-    "stream-assert": "^2.0.1"
+    "stream-assert": "^2.0.1",
+    "vinyl": "^2.1.0"
   },
   "dependencies": {
+    "ansi-colors": "^1.0.1",
     "event-stream": "~3.1.0",
     "glob": "^5.0.12",
-    "gulp-util": "~2.2.10",
+    "plugin-error": "^0.1.2",
     "source-map": "^0.5.1",
     "strip-bom": "^2.0.0",
     "vinyl-sourcemaps-apply": "^0.2.0"

@@ -1,4 +1,4 @@
-var gutil = require("gulp-util"),
+var Vinyl = require('vinyl'),
     should = require("should"),
     include = require("../index"),
     fs = require("fs"),
@@ -13,7 +13,7 @@ var gutil = require("gulp-util"),
 describe("gulp-include", function () {
   describe("File including", function () {
     it("should replace special comments with file contents", function (done) {
-      var file = new gutil.File({
+      var file = new Vinyl({
         base: "test/fixtures/",
         path: "test/fixtures/js/basic-include.js",
         contents: fs.readFileSync("test/fixtures/js/basic-include.js")
@@ -31,7 +31,7 @@ describe("gulp-include", function () {
     });
 
     it("should keep whitespace when including", function (done) {
-      var file = new gutil.File({
+      var file = new Vinyl({
         base: "test/fixtures/",
         path: "test/fixtures/js/whitespace.js",
         contents: fs.readFileSync("test/fixtures/js/whitespace.js")
@@ -49,7 +49,7 @@ describe("gulp-include", function () {
     });
 
     it("should include complex folder trees", function (done) {
-      var file = new gutil.File({
+      var file = new Vinyl({
         base: "test/fixtures/",
         path: "test/fixtures/js/include-trees.js",
         contents: fs.readFileSync("test/fixtures/js/include-trees.js")
@@ -68,7 +68,7 @@ describe("gulp-include", function () {
   })
 
   it("should not REQUIRE a file twice", function (done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/js/big-dummy-project-file.js",
       contents: fs.readFileSync("test/fixtures/js/big-dummy-project-file.js")
@@ -86,7 +86,7 @@ describe("gulp-include", function () {
   });
 
   it("should pull files recursively", function (done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/js/recursive.js",
       contents: fs.readFileSync("test/fixtures/js/recursive.js")
@@ -104,7 +104,7 @@ describe("gulp-include", function () {
   });
 
   it("should only include files with the set extensions, if provided", function (done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/js/options-extensions.js",
       contents: fs.readFileSync("test/fixtures/js/options-extensions.js")
@@ -124,7 +124,7 @@ describe("gulp-include", function () {
   });
 
   it("should work with html-comments", function(done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/html/basic-include.html",
       contents: fs.readFileSync("test/fixtures/html/basic-include.html")
@@ -155,7 +155,7 @@ describe("gulp-include", function () {
   });
 
   it('should strip unicode byte order marks from included files', function (done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/html/basic-include-with-unicode-BOM.html",
       contents: fs.readFileSync("test/fixtures/html/basic-include-with-unicode-BOM.html")
@@ -174,7 +174,7 @@ describe("gulp-include", function () {
   })
 
   it("should include from set includePaths", function(done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/js/include-path.js",
       contents: fs.readFileSync("test/fixtures/js/include-path.js")
@@ -198,7 +198,7 @@ describe("gulp-include", function () {
   })
 
   it("should throw an error if no match is found with hardFail: true", function(done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/js/include-fail.js",
       contents: fs.readFileSync("test/fixtures/js/include-fail.js")
@@ -214,7 +214,7 @@ describe("gulp-include", function () {
   })
 
   it("should not throw an error if no match is found with hardFail: false", function(done) {
-    var file = new gutil.File({
+    var file = new Vinyl({
       base: "test/fixtures/",
       path: "test/fixtures/js/include-fail.js",
       contents: fs.readFileSync("test/fixtures/js/include-fail.js")
