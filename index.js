@@ -13,9 +13,10 @@ module.exports = function (params) {
   var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
   var extensions = null, // The extension to be searched after
-      includedFiles = [], // Keeping track of what files have been included
+	  globalIncludedFiles = [], // For track of what files have been included over all files
       includePaths = false, // The paths to be searched
-      hardFail = false; // Throw error when no match
+      hardFail = false, // Throw error when no match
+	  separateInputs = false; // Process each input file separately when using `require` logic.
 
   // Check for includepaths in the params
   if (params.includePaths) {
@@ -26,6 +27,10 @@ module.exports = function (params) {
       // Set this array to the includepaths
       includePaths = params.includePaths;
     }
+  }
+  
+  if (params.separateInputs) {
+	  separateInputs = true;
   }
 
   // Toggle error reporting
@@ -38,6 +43,8 @@ module.exports = function (params) {
   }
 
   function include(file, callback) {
+	var includedFiles = separateInputs ? [] : globalIncludedFiles;
+	 
     if (file.isNull()) {
       return callback(null, file);
     }
@@ -47,7 +54,7 @@ module.exports = function (params) {
     }
 
     if (file.isBuffer()) {
-      var result = processInclude(String(file.contents), file.path, file.sourceMap);
+      var result = processInclude(String(file.contents), file.path, file.sourceMap, includedFiles);
       file.contents = new Buffer(result.content);
 
       if (file.sourceMap && result.map) {
@@ -68,7 +75,7 @@ module.exports = function (params) {
     callback(null, file);
   }
 
-  function processInclude(content, filePath, sourceMap) {
+  function processInclude(content, filePath, sourceMap, includedFiles) {
     var matches = content.match(/^(\s+)?(\/\/|\/\*|\#|\<\!\-\-)(\s+)?=(\s+)?(include|require)(.+$)/mg);
     var relativeBasePath = path.dirname(filePath);
 
@@ -172,7 +179,7 @@ module.exports = function (params) {
         // Unicode byte order marks are stripped from the start of included files
         var fileContents = stripBom(fs.readFileSync(globbedFilePath));
 
-        var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap);
+        var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap, includedFiles);
         var resultContent = result.content;
 
         if (sourceMap) {
