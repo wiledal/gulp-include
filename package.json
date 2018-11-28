@@ -26,7 +26,7 @@
     "stream-assert": "^2.0.1"
   },
   "dependencies": {
-    "event-stream": "~3.1.0",
+    "event-stream": "^3.3.4",
     "glob": "^5.0.12",
     "gulp-util": "~2.2.10",
     "source-map": "^0.5.1",
