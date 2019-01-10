@@ -15,7 +15,8 @@ module.exports = function (params) {
   var extensions = null, // The extension to be searched after
       includedFiles = [], // Keeping track of what files have been included
       includePaths = false, // The paths to be searched
-      hardFail = false; // Throw error when no match
+      hardFail = false, // Throw error when no match
+      aliases = {}; // Allow unique names to match filepaths
 
   // Check for includepaths in the params
   if (params.includePaths) {
@@ -26,6 +27,14 @@ module.exports = function (params) {
       // Set this array to the includepaths
       includePaths = params.includePaths;
     }
+  }
+
+  // Check for aliases in the params
+  if (params.aliases) {
+    if (typeof params.aliases != "object" || Array.isArray(params.aliases)) {
+      throw new gutil.PluginError('gulp-include', 'aliases option must be an object');
+    }
+    aliases = params.aliases;
   }
 
   // Toggle error reporting
@@ -136,6 +145,7 @@ module.exports = function (params) {
       // SEARCHING STARTS HERE
       // Split the directive and the path
       var includeType = split[0];
+      var includeValue = split[1];
 
       // Use glob for file searching
       var fileMatches = [];
@@ -144,14 +154,19 @@ module.exports = function (params) {
       if (includePaths != false) {
         // If includepaths are set, search in those folders
         for (var y = 0; y < includePaths.length; y++) {
-          includePath = includePaths[y] + "/" + split[1];
+          includePath = includePaths[y] + "/" + includeValue;
 
           var globResults = glob.sync(includePath, {mark: true});
           fileMatches = fileMatches.concat(globResults);
         }
+      } else if (aliases[includeValue]) {
+        // Add the absolute path
+        includePath = aliases[includeValue];
+        var globResults = glob.sync(includePath, {mark: true});
+        fileMatches = globResults;
       }else{
         // Otherwise search relatively
-        includePath = relativeBasePath + "/" + split[1];
+        includePath = relativeBasePath + "/" + includeValue;
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = globResults;
       }
