@@ -77,9 +77,14 @@ module.exports = function (params) {
     callback(null, file);
   }
 
-  function processInclude(content, filePath, sourceMap) {
+  function processInclude(content, filePath, sourceMap, filePathToplevel) {
     var matches = content.match(/^(\s+)?(\/\/|\/\*|\#|\<\!\-\-)(\s+)?=(\s+)?(include|require)(.+$)/mg);
     var relativeBasePath = path.dirname(filePath);
+
+    if (!filePathToplevel) {
+      // First call: save the source filepath.
+      filePathToplevel = filePath;
+    }
 
     if (!matches) return {content: content, map: null};
 
@@ -171,7 +176,13 @@ module.exports = function (params) {
         fileMatches = globResults;
       }
 
-      if (fileMatches.length < 1) fileNotFoundError(includePath);
+      if (fileMatches.length < 1) {
+        var includePathForError = includePath;
+        if (aliases[includeValue]) {
+          includePathForError = 'alias "' + includeValue + '" ' + includePath;
+        }
+        fileNotFoundError(includePathForError, filePath, filePathToplevel);
+      }
 
       var replaceContent = '';
       for (var y = 0; y < fileMatches.length; y++) {
@@ -187,7 +198,7 @@ module.exports = function (params) {
         // Unicode byte order marks are stripped from the start of included files
         var fileContents = stripBom(fs.readFileSync(globbedFilePath));
 
-        var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap);
+        var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap, filePathToplevel);
         var resultContent = result.content;
 
         if (sourceMap) {
@@ -294,7 +305,11 @@ module.exports = function (params) {
     }).join("\n");
   }
 
-  function fileNotFoundError(includePath) {
+  function fileNotFoundError(includePath, filePath, filePathToplevel) {
+    if (filePathToplevel !== filePath) {
+      filePath += ', starting from ' + filePathToplevel;
+    }
+    includePath += ' (source: ' + filePath + ')';
     if (hardFail) {
       throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
     }else{
