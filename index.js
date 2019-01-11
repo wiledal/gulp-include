@@ -156,7 +156,12 @@ module.exports = function (params) {
       var fileMatches = [];
       var includePath = "";
 
-      if (includePaths != false) {
+      if (aliases[includeValue]) {
+        // Add the absolute path
+        includePath = aliases[includeValue];
+        var globResults = glob.sync(includePath, {mark: true});
+        fileMatches = globResults;
+      } else if (includePaths != false) {
         // If includepaths are set, search in those folders
         for (var y = 0; y < includePaths.length; y++) {
           includePath = includePaths[y] + "/" + includeValue;
@@ -164,11 +169,6 @@ module.exports = function (params) {
           var globResults = glob.sync(includePath, {mark: true});
           fileMatches = fileMatches.concat(globResults);
         }
-      } else if (aliases[includeValue]) {
-        // Add the absolute path
-        includePath = aliases[includeValue];
-        var globResults = glob.sync(includePath, {mark: true});
-        fileMatches = globResults;
       }else{
         // Otherwise search relatively
         includePath = relativeBasePath + "/" + includeValue;
