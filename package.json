@@ -19,10 +19,11 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "debug": "^2.6.9",
     "gulp": "~3.3.4",
+    "gulp-sourcemaps": "^1.1.4",
     "mocha": "~1.17.0",
     "should": "~2.1.1",
-    "gulp-sourcemaps": "^1.1.4",
     "stream-assert": "^2.0.1"
   },
   "dependencies": {
