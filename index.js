@@ -15,7 +15,8 @@ module.exports = function (params) {
   var extensions = null, // The extension to be searched after
       includedFiles = [], // Keeping track of what files have been included
       includePaths = false, // The paths to be searched
-      hardFail = false; // Throw error when no match
+      hardFail = false, // Throw error when no match
+      aliases = {}; // Allow unique names to match filepaths
 
   // Check for includepaths in the params
   if (params.includePaths) {
@@ -26,6 +27,14 @@ module.exports = function (params) {
       // Set this array to the includepaths
       includePaths = params.includePaths;
     }
+  }
+
+  // Check for aliases in the params
+  if (params.aliases) {
+    if (typeof params.aliases != "object" || Array.isArray(params.aliases)) {
+      throw new gutil.PluginError('gulp-include', 'aliases option must be an object');
+    }
+    aliases = params.aliases;
   }
 
   // Toggle error reporting
@@ -68,9 +77,14 @@ module.exports = function (params) {
     callback(null, file);
   }
 
-  function processInclude(content, filePath, sourceMap) {
+  function processInclude(content, filePath, sourceMap, filePathToplevel) {
     var matches = content.match(/^(\s+)?(\/\/|\/\*|\#|\<\!\-\-)(\s+)?=(\s+)?(include|require)(.+$)/mg);
     var relativeBasePath = path.dirname(filePath);
+
+    if (!filePathToplevel) {
+      // First call: save the source filepath.
+      filePathToplevel = filePath;
+    }
 
     if (!matches) return {content: content, map: null};
 
@@ -136,27 +150,39 @@ module.exports = function (params) {
       // SEARCHING STARTS HERE
       // Split the directive and the path
       var includeType = split[0];
+      var includeValue = split[1];
 
       // Use glob for file searching
       var fileMatches = [];
       var includePath = "";
 
-      if (includePaths != false) {
+      if (aliases[includeValue]) {
+        // Add the absolute path
+        includePath = aliases[includeValue];
+        var globResults = glob.sync(includePath, {mark: true});
+        fileMatches = globResults;
+      } else if (includePaths != false) {
         // If includepaths are set, search in those folders
         for (var y = 0; y < includePaths.length; y++) {
-          includePath = includePaths[y] + "/" + split[1];
+          includePath = includePaths[y] + "/" + includeValue;
 
           var globResults = glob.sync(includePath, {mark: true});
           fileMatches = fileMatches.concat(globResults);
         }
       }else{
         // Otherwise search relatively
-        includePath = relativeBasePath + "/" + split[1];
+        includePath = relativeBasePath + "/" + includeValue;
         var globResults = glob.sync(includePath, {mark: true});
         fileMatches = globResults;
       }
 
-      if (fileMatches.length < 1) fileNotFoundError(includePath);
+      if (fileMatches.length < 1) {
+        var includePathForError = includePath;
+        if (aliases[includeValue]) {
+          includePathForError = 'alias "' + includeValue + '" ' + includePath;
+        }
+        fileNotFoundError(includePathForError, filePath, filePathToplevel);
+      }
 
       var replaceContent = '';
       for (var y = 0; y < fileMatches.length; y++) {
@@ -172,7 +198,7 @@ module.exports = function (params) {
         // Unicode byte order marks are stripped from the start of included files
         var fileContents = stripBom(fs.readFileSync(globbedFilePath));
 
-        var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap);
+        var result = processInclude(fileContents.toString(), globbedFilePath, sourceMap, filePathToplevel);
         var resultContent = result.content;
 
         if (sourceMap) {
@@ -279,7 +305,11 @@ module.exports = function (params) {
     }).join("\n");
   }
 
-  function fileNotFoundError(includePath) {
+  function fileNotFoundError(includePath, filePath, filePathToplevel) {
+    if (filePathToplevel !== filePath) {
+      filePath += ', starting from ' + filePathToplevel;
+    }
+    includePath += ' (source: ' + filePath + ')';
     if (hardFail) {
       throw new gutil.PluginError('gulp-include', 'No files found matching ' + includePath);
     }else{

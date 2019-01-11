@@ -30,6 +30,29 @@ describe("gulp-include", function () {
       testInclude.write(file);
     });
 
+    it("should use aliases if set", function (done) {
+      var file = new gutil.File({
+        base: "test/fixtures/",
+        path: "test/fixtures/js/basic-include-aliases.js",
+        contents: fs.readFileSync("test/fixtures/js/basic-include-aliases.js")
+      });
+
+      testInclude = include({
+        aliases: {
+          b: __dirname + '/fixtures/js/deep_path/b.js',
+          c: __dirname + '/fixtures/js/deep_path/deeper_path/c.js'
+        }
+      });
+      testInclude.on("data", function (newFile) {
+        should.exist(newFile);
+        should.exist(newFile.contents);
+
+        String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/js/basic-include-aliases.js"), "utf8"))
+        done();
+      });
+      testInclude.write(file);
+    });
+
     it("should keep whitespace when including", function (done) {
       var file = new gutil.File({
         base: "test/fixtures/",

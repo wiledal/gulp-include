@@ -54,6 +54,11 @@ gulp.task("default", ["scripts"]);
   an include directive.
   * If set to `false` gulp include will not fail, but display warnings in the console.
 
+- `aliases` (optional)
+  * Takes an `Object` of names to absolute paths  
+  eg: `{myModule: __dirname + '/my-module/*'}`
+  * If set, `gulp-include` will replace the alias with the expanded filepaths, allowing you to define global unique names (easier to read)
+
 #### Example options usage:
 ```js
 gulp.src("src/js/main.js")
@@ -63,7 +68,11 @@ gulp.src("src/js/main.js")
     includePaths: [
       __dirname + "/bower_components",
       __dirname + "/src/js"
-    ]
+    ],
+    aliases: {
+      jquery: __dirname + '/vendor/jquery.js',
+      myModule: __dirname + '/path/to/my-module/**/*.js'
+    }
   }))
   .pipe(gulp.dest("dist/js"));
 ```
