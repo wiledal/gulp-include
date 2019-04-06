@@ -53,6 +53,12 @@ gulp.task("default", ["scripts"]);
   * Set this to `true` if you want `gulp-include` to throw errors if a file does not match
   an include directive.
   * If set to `false` gulp include will not fail, but display warnings in the console.
+  
+- `separateInputs` (optional)
+  * Boolean, `true` by default
+  * Set this to `false` if you want to process each input file independent, when executing "require" logic. 
+  So, if file required several times inside one file (or inside required by it files), then dublicates will be ignored. 
+  But when another file will begin processing, all information about required files from previuos file will be discarded.
 
 #### Example options usage:
 ```js
