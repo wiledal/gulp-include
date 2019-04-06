@@ -1,5 +1,8 @@
 # Changelog
 
+#### 2.4.0
+* Lots of community fixes graceously assembled and merged by [KenEucker](https://github.com/KenEucker)
+
 #### 2.3.1
 * Isolated include to solve some scoping issues that happens when running multiple includes in parallel.
 

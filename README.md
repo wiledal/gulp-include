@@ -10,8 +10,6 @@ Enables functionality similar to that of snockets / sprockets or other file inse
 * Uses [globs](https://www.npmjs.com/package/glob) for simple path control
 * Works recursively (files can include files that can include files, and so on)
 
-*Warning: if you are updating from 1.x.x to 2.x.x, please read this readme to get up to date on the behavior of `gulp-include`*
-
 ## Installation
 ```shell
 npm install gulp-include
