@@ -1,8 +1,23 @@
-#gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
->Makes inclusion of files a breeze.  
-Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.
+# gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
 
-> Made for gulp 3
+<table>
+<tr>
+<td>Package</td><td>gulp-include</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>Makes inclusion of files a breeze. Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.</td>
+</tr>
+<tr>
+<td>Node Version</td>
+<td>>= 6.0.0 </td>
+</tr>
+<tr>
+<td>Gulp Version</td>
+<td>>= 3.0.0</td>
+</table>
+
+> Works with gulp 3 and gulp 4
 
 ## Features
 * Concatenate files with full control
