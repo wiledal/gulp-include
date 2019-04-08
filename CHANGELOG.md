@@ -1,5 +1,8 @@
 # Changelog
 
+#### 2.4.1
+* Added `debugIncludes` param
+
 #### 2.4.0
 * Lots of community fixes graceously assembled and merged by [KenEucker](https://github.com/KenEucker)
 * Dependencies update after three years.

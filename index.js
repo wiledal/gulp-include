@@ -17,7 +17,8 @@ module.exports = function (params) {
         globalIncludedFiles = [], // For track of what files have been included over all files
         includePaths = false, // The paths to be searched
         hardFail = false, // Throw error when no match
-        separateInputs = false; // Process each input file separately when using `require` logic.
+        debugIncludes = false, // Output debugging information on each include being processed
+        separateInputs = false; // Process each input file separately when using `require` logic
 
     // Check for includepaths in the params
     if (params.includePaths) {
@@ -29,7 +30,16 @@ module.exports = function (params) {
             includePaths = params.includePaths;
         }
     }
+  
+    // Toggle echoing of included filenames
+    if (params.debugIncludes != undefined) {
+      debugIncludes = params.debugIncludes;
+    }
 
+    if (params.extensions) {
+      extensions = typeof params.extensions === 'string' ? [params.extensions] : params.extensions;
+    }
+      
     if (params.separateInputs) {
         separateInputs = true;
     }
@@ -133,6 +143,11 @@ module.exports = function (params) {
                 .trim();
 
             var split = includeCommand.split(" ");
+
+            // Echo filenames of includes if debugIncludes is true
+            if (debugIncludes) {
+              console.log(gutil.colors.cyan('Including: ') + gutil.colors.blue.bold(split[1]));
+            }
 
             var currentLine;
             if (sourceMap) {
