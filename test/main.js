@@ -198,7 +198,7 @@ describe("gulp-include", function () {
     })
   
     it("should include from explicit relative path when includePaths set", function(done) {
-      var file = new gutil.File({
+      var file = new Vinyl({
         base: "test/fixtures/",
         path: "test/fixtures/js/include-path-relative.js",
         contents: fs.readFileSync("test/fixtures/js/include-path-relative.js")
@@ -220,7 +220,7 @@ describe("gulp-include", function () {
     })
 
     it("should include relative paths recursively when includePaths does not include recursively-included paths", function(done) {
-      var file = new gutil.File({
+	  var file = new Vinyl({
         base: "test/fixtures/",
         path: "test/fixtures/js/recursive-relative.js",
         contents: fs.readFileSync("test/fixtures/js/recursive-relative.js")
