@@ -1,16 +1,29 @@
-#gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
->Makes inclusion of files a breeze.  
-Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.
+# gulp-include [![NPM version][npm-image]][npm-url] ![Travis build][travis-image]
 
-> Made for gulp 3
+<table>
+<tr>
+<td>Package</td><td>gulp-include</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>Makes inclusion of files a breeze. Enables functionality similar to that of snockets / sprockets or other file insertion compilation tools.</td>
+</tr>
+<tr>
+<td>Node Version</td>
+<td>>= 6.0.0 </td>
+</tr>
+<tr>
+<td>Gulp Version</td>
+<td>>= 3.0.0</td>
+</table>
+
+> Works with gulp 3 and gulp 4
 
 ## Features
 * Concatenate files with full control
 * Respects indentation whitespace
 * Uses [globs](https://www.npmjs.com/package/glob) for simple path control
 * Works recursively (files can include files that can include files, and so on)
-
-*Warning: if you are updating from 1.x.x to 2.x.x, please read this readme to get up to date on the behavior of `gulp-include`*
 
 ## Installation
 ```shell
@@ -54,6 +67,12 @@ gulp.task("default", ["scripts"]);
   * Set this to `true` if you want `gulp-include` to throw errors if a file does not match
   an include directive.
   * If set to `false` gulp include will not fail, but display warnings in the console.
+  
+- `separateInputs` (optional)
+  * Boolean, `true` by default
+  * Set this to `false` if you want to process each input file independent, when executing "require" logic. 
+  So, if file required several times inside one file (or inside required by it files), then dublicates will be ignored. 
+  But when another file will begin processing, all information about required files from previuos file will be discarded.
 
 #### Example options usage:
 ```js

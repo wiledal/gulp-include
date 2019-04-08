@@ -1,5 +1,11 @@
 # Changelog
 
+#### 2.4.0
+* Lots of community fixes graceously assembled and merged by [KenEucker](https://github.com/KenEucker)
+* Dependencies update after three years.
+* The plugin now supports both gulp 3 and gulp version 4.
+* Merged support for separated includes between files, by [PFight](https://github.com/PFight)
+
 #### 2.3.1
 * Isolated include to solve some scoping issues that happens when running multiple includes in parallel.
 
