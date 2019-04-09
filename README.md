@@ -32,60 +32,16 @@ npm install gulp-include
 ## Usage
 Example `gulpfile.js`:
 ```javascript
-var gulp          = require("gulp"),
-    include       = require("gulp-include");
+const gulp = require('gulp')
+const include = require('gulp-include')
 
-gulp.task("scripts", function() {
-  console.log("-- gulp is running task 'scripts'");
-
-  gulp.src("src/js/main.js")
+exports.scripts = function (done) {
+  gulp.src('source/js/entry.js')
     .pipe(include())
       .on('error', console.log)
-    .pipe(gulp.dest("dist/js"));
-});
+    .pipe(gulp.dest('dist/js'))
+}
 
-gulp.task("default", ["scripts"]);
-
-```
-
-## Options
-- `extensions` (optional)
-  * Takes a `String` or an `Array` of extensions.  
-  eg: `"js"` or `["js", "coffee"]`
-  * If set, all directives that does not match the extension(s) will be ignored  
-
-
-- `includePaths` (optional)
-  * Takes a `String` or an `Array` of paths.  
-  eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
-  * If set, `gulp-include` will use these folders as base path when searching for files.
-  * If set, you can still include files relative to the current file by pre-pending includes with `./`.
-
-
-- `hardFail` (optional)
-  * Boolean, `false` by default
-  * Set this to `true` if you want `gulp-include` to throw errors if a file does not match
-  an include directive.
-  * If set to `false` gulp include will not fail, but display warnings in the console.
-  
-- `separateInputs` (optional)
-  * Boolean, `true` by default
-  * Set this to `false` if you want to process each input file independent, when executing "require" logic. 
-  So, if file required several times inside one file (or inside required by it files), then dublicates will be ignored. 
-  But when another file will begin processing, all information about required files from previuos file will be discarded.
-
-#### Example options usage:
-```js
-gulp.src("src/js/main.js")
-  .pipe(include({
-    extensions: "js",
-    hardFail: true,
-    includePaths: [
-      __dirname + "/bower_components",
-      __dirname + "/src/js"
-    ]
-  }))
-  .pipe(gulp.dest("dist/js"));
 ```
 
 ## Include directives
@@ -118,6 +74,46 @@ For instance, let's say you want to include `jquery.js` only once, and before an
 //=require vendor/*.js
 ```
 Note: This also works recursively. If for instance, for the example above, if another file in the folder `vendor` is also including `jquery.js` with the `require`-directive it will be ignored.
+
+## Options
+- `extensions` (optional)
+  * Takes a `String` or an `Array` of extensions.  
+  eg: `"js"` or `["js", "coffee"]`
+  * If set, all directives that does not match the extension(s) will be ignored  
+
+
+- `includePaths` (optional)
+  * Takes a `String` or an `Array` of paths.  
+  eg: `__dirname + "/node_modules"` or `[__dirname + "/assets/js", __dirname + "/bower_components"]`
+  * If set, `gulp-include` will use these folders as base path when searching for files.
+  * If set, you can still include files relative to the current file by pre-pending includes with `./`.
+
+
+- `hardFail` (optional)
+  * Boolean, `false` by default
+  * Set this to `true` if you want `gulp-include` to throw errors if a file does not match
+  an include directive.
+  * If set to `false` gulp include will not fail, but display warnings in the console.
+  
+- `separateInputs` (optional)
+  * Boolean, `false` by default
+  * Set this to `true` to allow each input file to use `require`-directives independently.
+  * Useful if you are referencing several paths in `gulp.src` and need them to `require` the same files.
+
+#### Example options usage:
+```js
+gulp.src('src/js/main.js')
+  .pipe(include({
+    extensions: 'js',
+    hardFail: true,
+    separateInputs: true,
+    includePaths: [
+      __dirname + '/bower_components',
+      __dirname + '/src/js'
+    ]
+  }))
+  .pipe(gulp.dest('dist/js'))
+```
 
 ## Changelog
 For release notes see `CHANGELOG.md`.

@@ -276,4 +276,32 @@ describe("gulp-include", function () {
         });
         testInclude.write(file);
     })
+
+    it("should allow `separateInputs: true` to `require` the same file, if in different streams", function (done) {
+        var file = new Vinyl({
+            base: "test/fixtures/",
+            path: "test/fixtures/js/separate-inputs/separate-inputs.js",
+            contents: fs.readFileSync("test/fixtures/js/separate-inputs/separate-inputs.js")
+        });
+        var file2 = new Vinyl({
+            base: "test/fixtures/",
+            path: "test/fixtures/js/separate-inputs/separate-inputs.js",
+            contents: fs.readFileSync("test/fixtures/js/separate-inputs/separate-inputs.js")
+        });
+
+        testInclude = include({
+            separateInputs: true
+        });
+        var index = 0
+        testInclude.on("data", function (newFile) {
+            index++
+            should.exist(newFile);
+            should.exist(newFile.contents);
+
+            String(newFile.contents).should.equal(String(fs.readFileSync("test/expected/js/separate-inputs.js"), "utf8"))
+            if (index==2) done();
+        });
+        testInclude.write(file);
+        testInclude.write(file2);
+    })
 })

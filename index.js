@@ -14,10 +14,10 @@ module.exports = function (params) {
     var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
     var extensions = null, // The extension to be searched after
-        globalIncludedFiles = [], // For track of what files have been included over all files
+        globalIncludedFiles = [], // To track what files have been included over all files
         includePaths = false, // The paths to be searched
         hardFail = false, // Throw error when no match
-        separateInputs = false; // Process each input file separately when using `require` logic.
+        separateInputs = false; // Process each input file separately when using `require` directive
 
     // Check for includepaths in the params
     if (params.includePaths) {
