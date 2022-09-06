@@ -14,10 +14,10 @@ module.exports = function (params) {
     var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
     var extensions = null, // The extension to be searched after
-        globalIncludedFiles = [], // To track what files have been included over all files
+        globalIncludedFiles = [], // For track of what files have been included over all files
         includePaths = false, // The paths to be searched
         hardFail = false, // Throw error when no match
-        separateInputs = false; // Process each input file separately when using `require` directive
+        separateInputs = false; // Process each input file separately when using `require` logic.
 
     // Check for includepaths in the params
     if (params.includePaths) {
@@ -155,7 +155,7 @@ module.exports = function (params) {
             var fileMatches = [];
             var includePath = "";
 
-            if (includePaths != false && !isExplicitRelativePath(split[1])) {
+            if (includePaths != false) {
                 // If includepaths are set, search in those folders
                 for (var y = 0; y < includePaths.length; y++) {
                     includePath = includePaths[y] + "/" + split[1];
@@ -167,7 +167,7 @@ module.exports = function (params) {
                 }
             } else {
                 // Otherwise search relatively
-                includePath = relativeBasePath + "/" + removeRelativePathPrefix(split[1]);
+                includePath = relativeBasePath + "/" + split[1];
                 var globResults = glob.sync(includePath, {
                     mark: true
                 });
@@ -203,28 +203,30 @@ module.exports = function (params) {
 
                         if (result.map.mappings && result.map.mappings.length > 0) {
                             var resultMap = new SourceMapConsumer(result.map);
-                            resultMap.eachMapping(function (mapping) {
-                                if (!mapping.source) return;
+                            resultMap.then(map => {
+                                map.eachMapping(function (mapping) {
+                                    if (!mapping.source) return;
 
-                                map.addMapping({
-                                    generated: {
-                                        line: mapping.generatedLine + currentLine - 1,
-                                        column: mapping.generatedColumn + (leadingWhitespace ? leadingWhitespace.length : 0)
-                                    },
-                                    original: {
-                                        line: mapping.originalLine,
-                                        column: mapping.originalColumn
-                                    },
-                                    source: mapping.source,
-                                    name: mapping.name
+                                    map.addMapping({
+                                        generated: {
+                                            line: mapping.generatedLine + currentLine - 1,
+                                            column: mapping.generatedColumn + (leadingWhitespace ? leadingWhitespace.length : 0)
+                                        },
+                                        original: {
+                                            line: mapping.originalLine,
+                                            column: mapping.originalColumn
+                                        },
+                                        source: mapping.source,
+                                        name: mapping.name
+                                    });
+
+                                    if (map.sourcesContent) {
+                                        map.sourcesContent.forEach(function (sourceContent, i) {
+                                            map.setSourceContent(map.sources[i], sourceContent);
+                                        });
+                                    }
                                 });
                             });
-
-                            if (result.map.sourcesContent) {
-                                result.map.sourcesContent.forEach(function (sourceContent, i) {
-                                    map.setSourceContent(result.map.sources[i], sourceContent);
-                                });
-                            }
                         }
                     } else { // result was a simple file, map whole file to new location
                         for (var q = 0; q < lines; q++) {
@@ -302,13 +304,6 @@ module.exports = function (params) {
         }).join("\n");
     }
 
-    function isExplicitRelativePath(filePath) {
-      return filePath.indexOf('./') === 0;
-    }
-
-    function removeRelativePathPrefix(filePath) {
-      return filePath.replace(/^\.\//, '');
-    }
     function fileNotFoundError(includePath) {
         if (hardFail) {
             throw new PluginError('gulp-include', 'No files found matching ' + includePath);
