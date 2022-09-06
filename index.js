@@ -14,10 +14,10 @@ module.exports = function (params) {
     var SourceMapConsumer = require('source-map').SourceMapConsumer;
 
     var extensions = null, // The extension to be searched after
-        globalIncludedFiles = [], // For track of what files have been included over all files
+        globalIncludedFiles = [], // To track what files have been included over all files
         includePaths = false, // The paths to be searched
         hardFail = false, // Throw error when no match
-        separateInputs = false; // Process each input file separately when using `require` logic.
+        separateInputs = false; // Process each input file separately when using `require` directive
 
     // Check for includepaths in the params
     if (params.includePaths) {
@@ -155,7 +155,7 @@ module.exports = function (params) {
             var fileMatches = [];
             var includePath = "";
 
-            if (includePaths != false) {
+            if (includePaths != false && !isExplicitRelativePath(split[1])) {
                 // If includepaths are set, search in those folders
                 for (var y = 0; y < includePaths.length; y++) {
                     includePath = includePaths[y] + "/" + split[1];
@@ -167,7 +167,7 @@ module.exports = function (params) {
                 }
             } else {
                 // Otherwise search relatively
-                includePath = relativeBasePath + "/" + split[1];
+                includePath = relativeBasePath + "/" + removeRelativePathPrefix(split[1]);
                 var globResults = glob.sync(includePath, {
                     mark: true
                 });
@@ -304,6 +304,13 @@ module.exports = function (params) {
         }).join("\n");
     }
 
+    function isExplicitRelativePath(filePath) {
+      return filePath.indexOf('./') === 0;
+    }
+
+    function removeRelativePathPrefix(filePath) {
+      return filePath.replace(/^\.\//, '');
+    }
     function fileNotFoundError(includePath) {
         if (hardFail) {
             throw new PluginError('gulp-include', 'No files found matching ' + includePath);
