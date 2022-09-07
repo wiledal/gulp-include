@@ -203,8 +203,8 @@ module.exports = function (params) {
 
                         if (result.map.mappings && result.map.mappings.length > 0) {
                             var resultMap = new SourceMapConsumer(result.map);
-                            resultMap.then(map => {
-                                map.eachMapping(function (mapping) {
+                            resultMap.then(consumer => {
+                                consumer.eachMapping(function (mapping) {
                                     if (!mapping.source) return;
 
                                     map.addMapping({
