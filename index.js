@@ -219,13 +219,13 @@ module.exports = function (params) {
                                         source: mapping.source,
                                         name: mapping.name
                                     });
-
-                                    if (map.sourcesContent) {
-                                        map.sourcesContent.forEach(function (sourceContent, i) {
-                                            map.setSourceContent(map.sources[i], sourceContent);
-                                        });
-                                    }
                                 });
+
+                                if (map.sourcesContent) {
+                                    map.sourcesContent.forEach(function (sourceContent, i) {
+                                        map.setSourceContent(map.sources[i], sourceContent);
+                                    });
+                                }
                             });
                         }
                     } else { // result was a simple file, map whole file to new location
