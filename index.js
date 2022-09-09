@@ -203,28 +203,30 @@ module.exports = function (params) {
 
                         if (result.map.mappings && result.map.mappings.length > 0) {
                             var resultMap = new SourceMapConsumer(result.map);
-                            resultMap.eachMapping(function (mapping) {
-                                if (!mapping.source) return;
+                            resultMap.then(consumer => {
+                                consumer.eachMapping(function (mapping) {
+                                    if (!mapping.source) return;
 
-                                map.addMapping({
-                                    generated: {
-                                        line: mapping.generatedLine + currentLine - 1,
-                                        column: mapping.generatedColumn + (leadingWhitespace ? leadingWhitespace.length : 0)
-                                    },
-                                    original: {
-                                        line: mapping.originalLine,
-                                        column: mapping.originalColumn
-                                    },
-                                    source: mapping.source,
-                                    name: mapping.name
+                                    map.addMapping({
+                                        generated: {
+                                            line: mapping.generatedLine + currentLine - 1,
+                                            column: mapping.generatedColumn + (leadingWhitespace ? leadingWhitespace.length : 0)
+                                        },
+                                        original: {
+                                            line: mapping.originalLine,
+                                            column: mapping.originalColumn
+                                        },
+                                        source: mapping.source,
+                                        name: mapping.name
+                                    });
                                 });
+
+                                if (map.sourcesContent) {
+                                    map.sourcesContent.forEach(function (sourceContent, i) {
+                                        map.setSourceContent(map.sources[i], sourceContent);
+                                    });
+                                }
                             });
-
-                            if (result.map.sourcesContent) {
-                                result.map.sourcesContent.forEach(function (sourceContent, i) {
-                                    map.setSourceContent(result.map.sources[i], sourceContent);
-                                });
-                            }
                         }
                     } else { // result was a simple file, map whole file to new location
                         for (var q = 0; q < lines; q++) {
